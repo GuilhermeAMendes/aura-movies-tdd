@@ -23,7 +23,7 @@ O sistema permite que um usuário (cliente) avalie filmes de um catálogo e rece
   Possível implementação:
 
   ```java
-    public class Filme {
+  public class Filme {
       private final FilmeId id;
       private String titulo;
       private Genero genero;
