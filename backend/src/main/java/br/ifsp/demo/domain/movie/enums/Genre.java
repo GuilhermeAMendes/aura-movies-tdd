@@ -1,0 +1,32 @@
+package br.ifsp.demo.domain.movie.enums;
+
+public enum Genre {
+    ACTION("Action"),
+    ADVENTURE("Adventure"),
+    COMEDY("Comedy"),
+    DRAMA("Drama"),
+    FANTASY("Fantasy"),
+    HORROR("Horror"),
+    ROMANCE("Romance"),
+    SCI_FI("Sci-Fi"),
+    THRILLER("Thriller"),
+    DOCUMENTARY("Documentary");
+    private final String label;
+
+    Genre(final String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public static Genre fromLabel(final String label) {
+        for (final Genre genre : Genre.values()) {
+            if (genre.getLabel().equals(label)) {
+                return genre;
+            }
+        }
+        return null;
+    }
+}
