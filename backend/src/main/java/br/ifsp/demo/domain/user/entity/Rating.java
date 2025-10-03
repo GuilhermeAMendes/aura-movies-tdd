@@ -12,7 +12,7 @@ public class Rating {
     private Note note;
     private LocalDateTime dateOfRating;
 
-    Rating(UUID id, MovieId movieId, Note note, LocalDateTime dateOfRating) {
+    public Rating(UUID id, MovieId movieId, Note note, LocalDateTime dateOfRating) {
         this.id = id;
         this.movieId = movieId;
         this.note = note;
