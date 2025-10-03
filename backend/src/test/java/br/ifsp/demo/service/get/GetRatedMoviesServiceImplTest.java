@@ -73,4 +73,30 @@ public class GetRatedMoviesServiceImplTest {
         assertThat(result).containsExactlyInAnyOrderElementsOf(userRatings);
         verify(jpaUserRepository, times(1)).findUserById(userId);
     }
+
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-2]")
+    @DisplayName("[SC-2.2] - Should return empty list of rated movies for user")
+    void shouldReturnEmptyListOfRatedMoviesForAUser() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        User user = User.builder().id(userId)
+                .name("Lucas")
+                .lastname("Java")
+                .email("lucasjava@gmail.com")
+                .ratings(List.of())
+                .password("secret").build();
+        // When
+        when(jpaUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
+        GetRatedMoviesService.RatedServiceRequestDTO requestDTO = new GetRatedMoviesService.RatedServiceRequestDTO(userId);
+        GetRatedMoviesService.RatedServiceResponseDTO responseDTO = sut.restoreRatedMovies(requestDTO);
+        List<Rating> result = responseDTO.ratings();
+
+        // Then
+        assertThat(result).isNotNull().isEmpty();
+        verify(jpaUserRepository, times(1)).findUserById(userId);
+    }
 }
