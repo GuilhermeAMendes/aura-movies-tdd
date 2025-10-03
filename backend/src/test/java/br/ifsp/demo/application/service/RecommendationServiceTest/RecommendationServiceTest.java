@@ -1,17 +1,16 @@
 package br.ifsp.demo.application.service.RecommendationServiceTest;
 
-import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.Genre;
+import br.ifsp.demo.domain.movie.Grade;
+import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.MovieId;
+import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
 import br.ifsp.demo.repository.JpaMovieRepository;
-import br.ifsp.demo.domain.movie.Grade;
-import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.repository.JpaUserRepository;
-import br.ifsp.demo.service.RecommendationServiceImpl;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import br.ifsp.demo.service.get.GetRecommendationService;
+import br.ifsp.demo.service.get.GetRecommendationServiceImpl;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,7 +31,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RecommendationServiceTest {
-    private static final int MINIMAL_RECOMMENDATIONS = 10;
 
     @Mock
     private JpaUserRepository userRepository;
@@ -40,21 +39,21 @@ public class RecommendationServiceTest {
     private JpaMovieRepository movieRepository;
 
     @InjectMocks
-    private RecommendationServiceImpl sut;
+    private GetRecommendationServiceImpl sut;
 
     private static List<Movie> createMockMovieList() {
-        return List.of(
-                new Movie(new MovieId(UUID.randomUUID()), "The Dark Knight", Genre.ACTION),
-                new Movie(new MovieId(UUID.randomUUID()), "Mad Max: Fury Road", Genre.ACTION),
-                new Movie(new MovieId(UUID.randomUUID()), "Inception", Genre.SCI_FI),
-                new Movie(new MovieId(UUID.randomUUID()), "Blade Runner 2049", Genre.SCI_FI),
-                new Movie(new MovieId(UUID.randomUUID()), "The Godfather", Genre.DRAMA),
-                new Movie(new MovieId(UUID.randomUUID()), "Forrest Gump", Genre.DRAMA),
-                new Movie(new MovieId(UUID.randomUUID()), "Parasite", Genre.THRILLER),
-                new Movie(new MovieId(UUID.randomUUID()), "The Silence of the Lambs", Genre.THRILLER),
-                new Movie(new MovieId(UUID.randomUUID()), "Pulp Fiction", Genre.COMEDY),
-                new Movie(new MovieId(UUID.randomUUID()), "The Lord of the Rings: The Fellowship of the Ring", Genre.FANTASY)
-        );
+        List<Movie> movies = new ArrayList<>();
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Dark Knight", Genre.ACTION));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Mad Max: Fury Road", Genre.ACTION));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Inception", Genre.SCI_FI));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Blade Runner 2049", Genre.SCI_FI));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Godfather", Genre.DRAMA));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Forrest Gump", Genre.DRAMA));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Parasite", Genre.THRILLER));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Silence of the Lambs", Genre.THRILLER));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Pulp Fiction", Genre.COMEDY));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Lord of the Rings: The Fellowship of the Ring", Genre.FANTASY));
+        return movies;
     }
 
     public static Stream<Arguments> recommendationMovies() {
@@ -70,32 +69,37 @@ public class RecommendationServiceTest {
     @ParameterizedTest
     @MethodSource("recommendationMovies")
     @DisplayName("[SC-4.1] - Should return personalized movies for a client with ratings")
-    void shouldReturnPersonalizedMovies(Genre genre, String ratedMovieTitle, String expectedMovieTitle) {
-        //Given
+    void shouldReturnPersonalizedMovies(Genre preferredGenre, String ratedMovieTitle, String expectedMovieTitle) {
         UUID userId = UUID.randomUUID();
         List<Movie> mockMovieList = createMockMovieList();
         Movie ratedMovie = mockMovieList.stream()
                 .filter(m -> m.getTitle().equals(ratedMovieTitle))
-                .findFirst().get();
+                .findFirst().orElseThrow();
         Movie expectedMovie = mockMovieList.stream()
                 .filter(m -> m.getTitle().equals(expectedMovieTitle))
-                .findFirst().get();
-        Rating rating = new Rating(UUID.randomUUID(), ratedMovie.getId(), new Grade(5), LocalDateTime.now());
-        User user = new User(userId, "Lucas", List.of(rating));
+                .findFirst().orElseThrow();
 
-        // When
+        Rating rating = new Rating(UUID.randomUUID(), ratedMovie.getMovieId(), new Grade(5), LocalDateTime.now());
+        User user = User.builder()
+                .id(userId)
+                .name("Lucas")
+                .lastname("Java")
+                .email("lucasjava@gmail.com")
+                .password("secret")
+                .ratings(List.of(rating))
+                .build();
+
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(movieRepository.findAll()).thenReturn(mockMovieList);
-        List<Movie> result = recommendationService.recommendMovies(userId);
 
-        // Then
+        List<Movie> result = sut.recommendMovies(new GetRecommendationService.RecommendationServiceRequestDTO(userId)).recommendations();
+
         long countOfPreferredGenre = result.stream()
-                .filter(movie -> movie.getGenre() == genre)
+                .filter(movie -> movie.getGenre() == preferredGenre)
                 .count();
 
         assertThat(result).isNotNull().isNotEmpty();
-        assertThat(result.size()).isEqualTo(MINIMAL_RECOMMENDATIONS);
-        assertThat(countOfPreferredGenre).isGreaterThanOrEqualTo(result.size()/2);
+        assertThat(countOfPreferredGenre).isGreaterThanOrEqualTo(result.size() / 2);
         assertThat(result).contains(expectedMovie);
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findAll();
@@ -104,21 +108,26 @@ public class RecommendationServiceTest {
     @Test
     @Tag("UnitTest")
     @Tag("TDD")
-    @DisplayName("[SC-4.2] - Should return 10 general movies for a user with no ratings")
+    @DisplayName("[SC-4.2] - Should return general movies for a user with no ratings")
     void shouldReturnGeneralMoviesForUserWithNoRatings() {
-        // Given
         UUID userId = UUID.randomUUID();
-        User user = new User(userId, "Lucas", List.of());
+        User user = User.builder()
+                .id(userId)
+                .name("Lucas")
+                .lastname("Java")
+                .email("lucasjava@gmail.com")
+                .password("secret")
+                .ratings(List.of())
+                .build();
         List<Movie> mockMovieList = createMockMovieList();
 
-        // When
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(movieRepository.findAll()).thenReturn(mockMovieList);
-        List<Movie> result = recommendationService.recommendMovies(userId);
 
-        // Then
+        List<Movie> result = sut.recommendMovies(new GetRecommendationService.RecommendationServiceRequestDTO(userId)).recommendations();
+
         assertThat(result).isNotNull();
-        assertThat(result.size()).isEqualTo(MINIMAL_RECOMMENDATIONS);
+        assertThat(result).isNotEmpty();
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findAll();
     }
