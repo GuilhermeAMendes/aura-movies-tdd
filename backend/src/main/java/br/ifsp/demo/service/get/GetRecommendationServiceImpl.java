@@ -37,25 +37,33 @@ public class GetRecommendationServiceImpl implements GetRecommendationService {
             return new RecommendationServiceResponseDTO(moviesAvailable);
         }
 
+        // get movies that the user positively rated
         Set<UUID> positivelyRatedMovieIds = foundUser.getRatings().stream()
                 .filter(r -> r.getGrade() != null && r.getGrade().value() >= 4)
                 .map(r -> r.getMovieId().unwrap())
                 .collect(Collectors.toSet());
 
+        // find out user's preferred genre based on their ratings
         Set<Genre> preferredGenres = moviesAvailable.stream()
                 .filter(m -> positivelyRatedMovieIds.contains(m.getMovieId().unwrap()))
                 .map(Movie::getGenre)
                 .collect(Collectors.toSet());
 
-        List<Movie> prioritized = moviesAvailable.stream()
-                .sorted((m1, m2) -> {
-                    boolean m1Preferred = preferredGenres.contains(m1.getGenre());
-                    boolean m2Preferred = preferredGenres.contains(m2.getGenre());
-                    if (m1Preferred == m2Preferred) return 0;
-                    return m1Preferred ? -1 : 1;
-                })
+        // starting list of recommendations based on the positively rated movies and their genres
+        List<Movie> recommendations = moviesAvailable.stream()
+                .filter(movie -> preferredGenres.contains(movie.getGenre()))
                 .toList();
 
-        return new RecommendationServiceResponseDTO(prioritized);
+        // avoid recommending movies the user already rated, add this:
+        Set<UUID> alreadyRatedIds = foundUser.getRatings().stream()
+                .map(r -> r.getMovieId().unwrap())
+                .collect(Collectors.toSet());
+
+        // final list of recommendations that remove already rated movies from the starting list
+        List<Movie> finalRecommendations = recommendations.stream()
+                .filter(movie -> !alreadyRatedIds.contains(movie.getMovieId().unwrap()))
+                .toList();
+
+        return new RecommendationServiceResponseDTO(finalRecommendations);
     }
 }
