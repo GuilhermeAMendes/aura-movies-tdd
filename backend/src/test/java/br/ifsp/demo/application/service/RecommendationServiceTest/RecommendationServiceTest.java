@@ -1,14 +1,14 @@
 package br.ifsp.demo.application.service.RecommendationServiceTest;
 
-import br.ifsp.demo.application.service.recommendation.RecommendationService;
 import br.ifsp.demo.domain.movie.Movie;
-import br.ifsp.demo.domain.movie.enums.Genre;
-import br.ifsp.demo.domain.movie.repository.MovieRepository;
-import br.ifsp.demo.domain.movie.valueObjects.MovieId;
-import br.ifsp.demo.domain.movie.valueObjects.Note;
+import br.ifsp.demo.domain.movie.Genre;
+import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.domain.user.User;
-import br.ifsp.demo.domain.user.entity.Rating;
-import br.ifsp.demo.domain.user.repository.UserRepository;
+import br.ifsp.demo.repository.JpaMovieRepository;
+import br.ifsp.demo.domain.movie.Grade;
+import br.ifsp.demo.domain.user.Rating;
+import br.ifsp.demo.repository.JpaUserRepository;
+import br.ifsp.demo.service.RecommendationServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -34,13 +34,13 @@ public class RecommendationServiceTest {
     private static final int MINIMAL_RECOMMENDATIONS = 10;
 
     @Mock
-    private UserRepository userRepository;
+    private JpaUserRepository userRepository;
 
     @Mock
-    private MovieRepository movieRepository;
+    private JpaMovieRepository movieRepository;
 
     @InjectMocks
-    private RecommendationService recommendationService;
+    private RecommendationServiceImpl sut;
 
     private static List<Movie> createMockMovieList() {
         return List.of(
@@ -80,7 +80,7 @@ public class RecommendationServiceTest {
         Movie expectedMovie = mockMovieList.stream()
                 .filter(m -> m.getTitle().equals(expectedMovieTitle))
                 .findFirst().get();
-        Rating rating = new Rating(UUID.randomUUID(), ratedMovie.getId(), new Note(5), LocalDateTime.now());
+        Rating rating = new Rating(UUID.randomUUID(), ratedMovie.getId(), new Grade(5), LocalDateTime.now());
         User user = new User(userId, "Lucas", List.of(rating));
 
         // When
