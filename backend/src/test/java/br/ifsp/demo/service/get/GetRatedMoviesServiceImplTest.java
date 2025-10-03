@@ -63,8 +63,8 @@ public class GetRatedMoviesServiceImplTest {
 
         // When
         when(jpaUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
-        RatedServiceRequestDTO requestDTO = new GetRatedMoviesService.RatedServiceRequestDTO(userId);
-        RatedServiceResponseDTO responseDTO = sut.restoreRatedMovies(requestDTO);
+        GetRatedMoviesService.RatedServiceRequestDTO requestDTO = new GetRatedMoviesService.RatedServiceRequestDTO(userId);
+        GetRatedMoviesService.RatedServiceResponseDTO responseDTO = sut.restoreRatedMovies(requestDTO);
 
         List<Rating> result = responseDTO.ratings();
 
