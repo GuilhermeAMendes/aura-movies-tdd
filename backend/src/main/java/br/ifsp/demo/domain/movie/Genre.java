@@ -1,5 +1,8 @@
-package br.ifsp.demo.domain.movie.enums;
+package br.ifsp.demo.domain.movie;
 
+import lombok.Getter;
+
+@Getter
 public enum Genre {
     ACTION("Action"),
     ADVENTURE("Adventure"),
@@ -15,10 +18,6 @@ public enum Genre {
 
     Genre(final String label) {
         this.label = label;
-    }
-
-    public String getLabel() {
-        return label;
     }
 
     public static Genre fromLabel(final String label) {
