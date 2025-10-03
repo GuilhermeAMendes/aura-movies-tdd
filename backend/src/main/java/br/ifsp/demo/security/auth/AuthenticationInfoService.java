@@ -1,6 +1,6 @@
 package br.ifsp.demo.security.auth;
 
-import br.ifsp.demo.security.user.User;
+import br.ifsp.demo.domain.user.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

@@ -1,40 +1,75 @@
 package br.ifsp.demo.domain.user;
 
-import br.ifsp.demo.domain.user.entity.Rating;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
+import java.sql.Types;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public class User {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "app_user")
+public class User implements UserDetails {
+    @Id
+    @JdbcTypeCode(Types.VARCHAR)
+    @Column(nullable = false)
     private UUID id;
+    @Column(nullable = false)
     private String name;
-    private List<Rating> allRating;
+    @Column(nullable = false)
+    private String lastname;
+    @Column(nullable = false)
+    private String email;
+    @Column(nullable = false)
+    private String password;
 
-    public User(UUID id, String name, List<Rating> allRating) {
-        this.id = id;
-        this.name = name;
-        this.allRating = allRating;
-    }
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    public UUID getId() {
-        return id;
-    }
+    @Column
+    private List<Rating> ratings;
 
-    public String getName() {
-        return name;
-    }
-
-    public List<Rating> getAllRating() {
-        return new ArrayList<>(this.allRating);
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", allRating=" + allRating +
-                '}';
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 }
