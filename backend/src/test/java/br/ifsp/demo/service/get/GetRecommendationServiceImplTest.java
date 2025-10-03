@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
 import org.junit.jupiter.api.*;
@@ -25,6 +26,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -130,5 +132,22 @@ public class GetRecommendationServiceImplTest {
         assertThat(result).isNotEmpty();
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findAll();
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-4]")
+    @DisplayName("[SC-4.3] - Should throw when user not found")
+    void shouldThrowWhenUserNotFound() {
+        UUID missingUserId = UUID.randomUUID();
+
+        when(userRepository.findById(missingUserId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> sut.recommendMovies(new GetRecommendationService.RecommendationServiceRequestDTO(missingUserId)))
+                .isInstanceOf(UserNotFoundException.class);
+
+        verify(userRepository, times(1)).findById(missingUserId);
+        verifyNoInteractions(movieRepository);
     }
 }
