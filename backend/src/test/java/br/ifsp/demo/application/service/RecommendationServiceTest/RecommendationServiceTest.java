@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.movie.enums.Genre;
 import br.ifsp.demo.domain.movie.valueObjects.MovieId;
 import br.ifsp.demo.domain.user.User;
 import br.ifsp.demo.domain.movie.repository.MovieRepository;
+import br.ifsp.demo.domain.user.entity.Rating;
 import br.ifsp.demo.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -36,13 +37,22 @@ public class RecommendationServiceTest {
     @InjectMocks
     private RecommendationService recommendationService;
 
-    private static List<Movie> createMockMovieList(){
-        List<Movie> movies = new ArrayList<>();
-        for (int i = 0; i < MINIMAL_RECOMMENDATIONS; i++){
-            movies.add(new Movie(new MovieId(UUID.randomUUID()), "Mock Movie " + i, Genre.ACTION));
-        }
-        return movies;
+    private static List<Movie> createMockMovieList() {
+        return List.of(
+                new Movie(new MovieId(UUID.randomUUID()), "The Dark Knight", Genre.ACTION),
+                new Movie(new MovieId(UUID.randomUUID()), "Mad Max: Fury Road", Genre.ACTION),
+                new Movie(new MovieId(UUID.randomUUID()), "Inception", Genre.SCI_FI),
+                new Movie(new MovieId(UUID.randomUUID()), "Blade Runner 2049", Genre.SCI_FI),
+                new Movie(new MovieId(UUID.randomUUID()), "The Godfather", Genre.DRAMA),
+                new Movie(new MovieId(UUID.randomUUID()), "Forrest Gump", Genre.DRAMA),
+                new Movie(new MovieId(UUID.randomUUID()), "Parasite", Genre.THRILLER),
+                new Movie(new MovieId(UUID.randomUUID()), "The Silence of the Lambs", Genre.THRILLER),
+                new Movie(new MovieId(UUID.randomUUID()), "Pulp Fiction", Genre.COMEDY),
+                new Movie(new MovieId(UUID.randomUUID()), "The Lord of the Rings: The Fellowship of the Ring", Genre.FANTASY)
+        );
     }
+
+
 
     @Test
     @Tag("UnitTest")
