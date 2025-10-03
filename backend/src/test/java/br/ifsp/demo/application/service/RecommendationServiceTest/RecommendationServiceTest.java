@@ -1,5 +1,12 @@
 package br.ifsp.demo.application.service.RecommendationServiceTest;
 
+import br.ifsp.demo.application.service.recommendation.RecommendationService;
+import br.ifsp.demo.domain.movie.Movie;
+import br.ifsp.demo.domain.movie.enums.Genre;
+import br.ifsp.demo.domain.movie.valueObjects.MovieId;
+import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.domain.movie.repository.MovieRepository;
+import br.ifsp.demo.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,7 +28,7 @@ public class RecommendationServiceTest {
     private static final int MINIMAL_RECOMMENDATIONS = 10;
 
     @Mock
-    private UserRepository UserRepository;
+    private UserRepository userRepository;
 
     @Mock
     private MovieRepository movieRepository;
@@ -32,7 +39,7 @@ public class RecommendationServiceTest {
     private static List<Movie> createMockMovieList(){
         List<Movie> movies = new ArrayList<>();
         for (int i = 0; i < MINIMAL_RECOMMENDATIONS; i++){
-            movies.add(new Movie());
+            movies.add(new Movie(new MovieId(UUID.randomUUID()), "Mock Movie " + i, Genre.ACTION));
         }
         return movies;
     }
@@ -48,14 +55,14 @@ public class RecommendationServiceTest {
         List<Movie> mockMovieList  = createMockMovieList();
 
         // When
-        when(UserRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(movieRepository.findAll()).thenReturn(mockMovieList);
         List<Movie> result = recommendationService.recommendMovies(userId);
 
         // Then
         assertThat(result).isNotNull();
         assertThat(result.size()).isEqualTo(MINIMAL_RECOMMENDATIONS);
-        verify(UserRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findAll();
     }
 }
