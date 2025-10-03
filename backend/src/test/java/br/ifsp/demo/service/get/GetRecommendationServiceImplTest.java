@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RecommendationServiceTest {
+public class GetRecommendationServiceImplTest {
 
     @Mock
     private JpaUserRepository userRepository;
