@@ -66,6 +66,7 @@ public class RecommendationServiceTest {
 
     @Tag("UnitTest")
     @Tag("TDD")
+    @Tag("[US-4]")
     @ParameterizedTest
     @MethodSource("recommendationMovies")
     @DisplayName("[SC-4.1] - Should return personalized movies for a client with ratings")
@@ -108,6 +109,7 @@ public class RecommendationServiceTest {
     @Test
     @Tag("UnitTest")
     @Tag("TDD")
+    @Tag("[US-4]")
     @DisplayName("[SC-4.2] - Should return general movies for a user with no ratings")
     void shouldReturnGeneralMoviesForUserWithNoRatings() {
         UUID userId = UUID.randomUUID();
