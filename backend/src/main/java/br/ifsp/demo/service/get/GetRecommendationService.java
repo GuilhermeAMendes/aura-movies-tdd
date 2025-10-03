@@ -1,12 +1,12 @@
-package br.ifsp.demo.service;
+package br.ifsp.demo.service.get;
 
 import br.ifsp.demo.domain.movie.Movie;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface RecommendationService {
-    List<Movie> recommendMovies(RecommendationServiceRequestDTO request);
+public interface GetRecommendationService {
+    RecommendationServiceResponseDTO recommendMovies(RecommendationServiceRequestDTO request);
 
     record RecommendationServiceRequestDTO(
             UUID userId
