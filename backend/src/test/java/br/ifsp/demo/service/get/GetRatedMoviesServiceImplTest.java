@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaUserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -98,5 +100,25 @@ public class GetRatedMoviesServiceImplTest {
         // Then
         assertThat(result).isNotNull().isEmpty();
         verify(jpaUserRepository, times(1)).findUserById(userId);
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-2]")
+    @DisplayName("[SC-2.3] - Should throw when user not found")
+    void shouldThrowWhenUserNotFound() {
+        // Given
+        UUID userId = UUID.randomUUID();
+
+        // When
+        when(jpaUserRepository.findUserById(userId)).thenReturn(Optional.empty());
+
+        // Then
+        assertThatThrownBy(() -> sut.restoreRatedMovies(new GetRatedMoviesService.RatedServiceRequestDTO(userId))).
+                isInstanceOf(UserNotFoundException.class);
+
+        verify(jpaUserRepository, times(1)).findUserById(userId);
+
     }
 }
