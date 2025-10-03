@@ -1,4 +1,4 @@
-package br.ifsp.demo.application.service.RecommendationServiceTest;
+package br.ifsp.demo.service.get;
 
 import br.ifsp.demo.domain.movie.Genre;
 import br.ifsp.demo.domain.movie.Grade;
@@ -8,8 +8,6 @@ import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
-import br.ifsp.demo.service.get.GetRecommendationService;
-import br.ifsp.demo.service.get.GetRecommendationServiceImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -1,4 +1,4 @@
-package br.ifsp.demo.application.service.RecommendationServiceTest;
+package br.ifsp.demo.suite;
 
 import org.junit.platform.suite.api.IncludeTags;
 import org.junit.platform.suite.api.SelectPackages;
