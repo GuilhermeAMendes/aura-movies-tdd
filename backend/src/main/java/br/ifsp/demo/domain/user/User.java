@@ -1,5 +1,7 @@
 package br.ifsp.demo.domain.user;
 
+import br.ifsp.demo.domain.movie.Grade;
+import br.ifsp.demo.domain.movie.MovieId;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -71,5 +74,17 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    public Rating updateRating(MovieId movieId, Grade newGrade) {
+        Optional<Rating> ratingToUpdate = this.ratings.stream()
+                .filter(rating -> rating.getMovieId().equals(movieId))
+                .findFirst();
+
+        if (ratingToUpdate.isEmpty()) throw new EntityNotFoundException("Rating for this movie not found.");
+
+        Rating foundRating = ratingToUpdate.get();
+        foundRating.setGrade(newGrade);
+        return foundRating;
     }
 }
