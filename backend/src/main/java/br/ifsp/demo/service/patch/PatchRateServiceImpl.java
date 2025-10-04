@@ -1,6 +1,5 @@
 package br.ifsp.demo.service.patch;
 
-import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
 import br.ifsp.demo.exception.UserNotFoundException;
