@@ -90,7 +90,7 @@ public class PatchRateServiceImplTest {
     @Tag("[US-3]")
     @ParameterizedTest
     @MethodSource("createMovie")
-    @DisplayName("[SC-3.1] - Should reject update on missing review")
+    @DisplayName("[SC-3.3] - Should reject update on missing review")
     void shouldRejectUpdateOnMissingReview(Movie movie) {
         // Given
         UUID userId = UUID.randomUUID();
