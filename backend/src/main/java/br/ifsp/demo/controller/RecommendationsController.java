@@ -23,7 +23,8 @@ public class RecommendationsController {
     @GetMapping
     public ResponseEntity<GetRecommendationService.RecommendationServiceResponseDTO> getRecommendations() {
         UUID userId = authenticationInfoService.getAuthenticatedUserId();
-        GetRecommendationService.RecommendationServiceResponseDTO response = getRecommendationService.recommendMovies(new GetRecommendationService.RecommendationServiceRequestDTO(userId));
+        var request = new GetRecommendationService.RecommendationServiceRequestDTO(userId);
+        var response = getRecommendationService.recommendMovies(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
