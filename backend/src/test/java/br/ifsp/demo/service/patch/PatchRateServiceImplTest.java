@@ -8,6 +8,7 @@ import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
 import br.ifsp.demo.exception.MovieNotFoundException;
 import br.ifsp.demo.exception.ReviewNotFoundException;
+import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
 import org.junit.jupiter.api.*;
@@ -130,6 +131,22 @@ public class PatchRateServiceImplTest {
 
         // Then
         assertThatThrownBy(() -> sut.patchRate(request)).isInstanceOf(MovieNotFoundException.class);
+    }
+
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-3]")
+    @ParameterizedTest
+    @MethodSource("createMovie")
+    @DisplayName("[SC-3.5] - Should reject review alteration by non-authenticated user")
+    void shouldRejectUnauthorisedUser(Movie movie) {
+        UUID userId = UUID.randomUUID();
+        Grade newGrade = new Grade(4);
+        PatchRateService.PatchRateServiceRequestDTO request = new PatchRateService.PatchRateServiceRequestDTO(userId, movie.getMovieId(), newGrade);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> sut.patchRate(request)).isInstanceOf(UserNotFoundException.class);
     }
 
 }
