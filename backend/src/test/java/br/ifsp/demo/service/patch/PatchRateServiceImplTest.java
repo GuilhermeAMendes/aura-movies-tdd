@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.exception.MovieNotFoundException;
 import br.ifsp.demo.exception.ReviewNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
@@ -107,6 +108,28 @@ public class PatchRateServiceImplTest {
         // Then
         assertThatThrownBy(() -> sut.patchRate(request))
                 .isInstanceOf(ReviewNotFoundException.class);
+    }
+
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-3]")
+    @ParameterizedTest
+    @MethodSource("createMovie")
+    @DisplayName("[SC-3.4] - Should reject update on missing movie")
+    void shouldRejectUpdateOnMissingMovie(Movie movie) {
+        // Given
+        UUID userId = UUID.randomUUID();
+        Grade newGrade = new Grade(4);
+
+        User user = User.builder().id(userId).ratings(new ArrayList<>()).build();
+
+        // When
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findById(movie.getMovieId())).thenReturn(Optional.empty());
+        PatchRateService.PatchRateServiceRequestDTO request = new PatchRateService.PatchRateServiceRequestDTO(userId, movie.getMovieId(), newGrade);
+
+        // Then
+        assertThatThrownBy(() -> sut.patchRate(request)).isInstanceOf(MovieNotFoundException.class);
     }
 
 }
