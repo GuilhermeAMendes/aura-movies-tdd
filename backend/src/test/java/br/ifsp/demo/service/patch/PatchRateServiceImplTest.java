@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.exception.ReviewNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
 import org.junit.jupiter.api.*;
@@ -22,6 +23,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,6 +83,30 @@ public class PatchRateServiceImplTest {
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findById(movie.getMovieId());
         verify(userRepository, times(1)).save(user);
+    }
+
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-3]")
+    @ParameterizedTest
+    @MethodSource("createMovie")
+    @DisplayName("[SC-3.1] - Should reject update on missing review")
+    void shouldRejectUpdateOnMissingReview(Movie movie) {
+        // Given
+        UUID userId = UUID.randomUUID();
+        Grade newGrade = new Grade(4);
+        List<Rating> userRatings = new ArrayList<>();
+
+        User user = User.builder().id(userId).ratings(userRatings).build();
+
+        // When
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findById(movie.getMovieId())).thenReturn(Optional.of(movie));
+        PatchRateService.PatchRateServiceRequestDTO request = new PatchRateService.PatchRateServiceRequestDTO(userId, movie.getMovieId(), newGrade);
+
+        // Then
+        assertThatThrownBy(() -> sut.patchRate(request))
+                .isInstanceOf(ReviewNotFoundException.class);
     }
 
 }
