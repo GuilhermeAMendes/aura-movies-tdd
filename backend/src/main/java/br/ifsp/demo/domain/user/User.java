@@ -38,7 +38,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_ratings", joinColumns = @JoinColumn(name = "user_id"))
     private List<Rating> ratings;
 
     @Override

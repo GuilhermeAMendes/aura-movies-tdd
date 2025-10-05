@@ -1,3 +1,10 @@
 package br.ifsp.demo.domain.movie;
 
-public record Grade(int value){}
+import jakarta.persistence.Embeddable;
+
+@Embeddable
+public record Grade(int value) {
+    public Grade() {
+        this(0);
+    }
+}
