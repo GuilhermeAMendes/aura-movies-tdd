@@ -2,6 +2,7 @@ package br.ifsp.demo.service.post;
 
 import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.exception.MovieNotFoundException;
 import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
@@ -21,7 +22,7 @@ public class PostRateServiceImpl implements PostRateService {
                 new UserNotFoundException("User not found")
         );
 
-        if (movieRepository.findById(request.movieId()).isEmpty()) return null;
+        if (movieRepository.findById(request.movieId()).isEmpty()) throw new MovieNotFoundException("Movie not found");
 
         Rating rating = user.addRating(request.movieId(), request.grade());
         userRepository.save(user);

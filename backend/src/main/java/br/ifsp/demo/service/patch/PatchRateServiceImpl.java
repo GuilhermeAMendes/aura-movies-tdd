@@ -2,6 +2,7 @@ package br.ifsp.demo.service.patch;
 
 import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.exception.MovieNotFoundException;
 import br.ifsp.demo.exception.ReviewNotFoundException;
 import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
@@ -24,7 +25,7 @@ public class PatchRateServiceImpl implements PatchRateService {
                 new UserNotFoundException("User not found")
                 );
 
-        if (movieRepository.findById(request.movieId()).isEmpty()) return null;
+        if (movieRepository.findById(request.movieId()).isEmpty()) throw new MovieNotFoundException("Movie not found");
 
         if (user.getRatings().isEmpty()) throw new ReviewNotFoundException("Review not found");
 
