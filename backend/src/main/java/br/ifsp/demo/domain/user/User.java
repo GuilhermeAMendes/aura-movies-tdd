@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Types;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -75,6 +76,19 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    public Rating addRating(MovieId movieId, Grade grade) {
+        boolean alreadyExists = this.ratings.stream().anyMatch(rating ->
+            rating.getMovieId().equals(movieId)
+        );
+
+        if (alreadyExists) return null;
+
+        Rating rating = new Rating(movieId, grade, LocalDateTime.now());
+
+        this.ratings.add(rating);
+        return rating;
     }
 
     public Rating updateRating(MovieId movieId, Grade newGrade) {
