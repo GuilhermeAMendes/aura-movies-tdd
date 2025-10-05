@@ -1,6 +1,7 @@
 package br.ifsp.demo.controller;
 
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
+import br.ifsp.demo.security.config.JwtService;
 import br.ifsp.demo.service.get.GetRecommendationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -25,6 +26,9 @@ public class RecommendationControllerTest {
 
     @MockitoBean
     private GetRecommendationService getRecommendationService;
+
+    @MockitoBean
+    private JwtService jwtService;
 
     @Test
     @Tag("UnitTest")
