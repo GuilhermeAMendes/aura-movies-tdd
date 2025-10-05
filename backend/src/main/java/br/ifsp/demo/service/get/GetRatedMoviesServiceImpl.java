@@ -3,9 +3,11 @@ package br.ifsp.demo.service.get;
 import br.ifsp.demo.domain.user.User;
 import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaUserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class GetRatedMoviesServiceImpl implements GetRatedMoviesService {
     private final JpaUserRepository userRepository;
 

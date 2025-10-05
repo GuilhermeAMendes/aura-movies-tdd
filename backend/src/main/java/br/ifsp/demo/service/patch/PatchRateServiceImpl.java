@@ -5,7 +5,9 @@ import br.ifsp.demo.domain.user.User;
 import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PatchRateServiceImpl implements PatchRateService {
     private final JpaUserRepository userRepository;
     private final JpaMovieRepository movieRepository;
