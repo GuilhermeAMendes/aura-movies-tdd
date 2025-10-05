@@ -10,9 +10,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class GradeTest {
 
     @Tag("UnitTest")
+    @Tag("[US-3]")
     @ParameterizedTest
     @ValueSource(ints = {-5, -1, 6, 10})
-    @DisplayName("Should throw exception when grade is out of interval [0, 5]")
+    @DisplayName("[SC-3.2] - Should throw exception when grade is out of interval [0, 5]")
     void shouldThrowExceptionWhenGradeIsOutOfInterval(int invalidGradeValue) {
         assertThatThrownBy(() -> new Grade(invalidGradeValue)).isInstanceOf(IllegalArgumentException.class);
     }
