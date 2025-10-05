@@ -5,17 +5,24 @@ import br.ifsp.demo.domain.movie.Grade;
 import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.exception.MovieNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,5 +66,32 @@ public class PostRateServiceImplTest {
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findById(movieToRate.getMovieId());
         verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-1]")
+    @DisplayName("[SC-1.3] - Should return movie not found")
+    void shouldReturnMovieNotFound() {
+        // Given
+        UUID userId = UUID.randomUUID();
+        Random random = new Random();
+        Movie movieToRate = new Movie(new MovieId(UUID.randomUUID()), "Blade Runner: 2069", Genre.SCI_FI);
+        Grade grade = new Grade(random.nextInt(5));
+
+        User user = User.builder().id(userId).ratings(new ArrayList<>()).build();
+
+        // When
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findById(movieToRate.getMovieId())).thenReturn(Optional.empty());
+        PostRateService.PostRateServiceRequestDTO request =
+                new PostRateService.PostRateServiceRequestDTO(userId, movieToRate.getMovieId(), grade);
+
+        // Then
+        assertThatThrownBy(() -> sut.saveRate(request)).isInstanceOf(MovieNotFoundException.class);
+        verify(userRepository, times(1)).findById(userId);
+        verify(movieRepository, times(1)).findById(movieToRate.getMovieId());
+        verify(userRepository, never()).save(user);
     }
 }
