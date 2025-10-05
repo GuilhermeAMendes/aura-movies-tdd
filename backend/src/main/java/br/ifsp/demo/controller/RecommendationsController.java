@@ -15,7 +15,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "/api/v1/recommendations")
 @AllArgsConstructor
-public class RecommendationController {
+public class RecommendationsController {
 
     private final AuthenticationInfoService authenticationInfoService;
     private final GetRecommendationService getRecommendationService;

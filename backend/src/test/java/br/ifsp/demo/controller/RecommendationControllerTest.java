@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = RecommendationController.class)
+@WebMvcTest(controllers = RecommendationsController.class)
 public class RecommendationControllerTest {
 
     @Autowired
