@@ -80,7 +80,7 @@ public class GetRecommendationServiceImplTest {
                 .filter(m -> m.getTitle().equals(expectedMovieTitle))
                 .findFirst().orElseThrow();
 
-        Rating rating = new Rating(UUID.randomUUID(), ratedMovie.getMovieId(), new Grade(5), LocalDateTime.now());
+        Rating rating = new Rating(ratedMovie.getMovieId(), new Grade(5), LocalDateTime.now());
         User user = User.builder()
                 .id(userId)
                 .name("Lucas")

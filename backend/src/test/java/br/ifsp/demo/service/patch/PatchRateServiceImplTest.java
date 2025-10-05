@@ -63,7 +63,7 @@ public class PatchRateServiceImplTest {
         UUID userId = UUID.randomUUID();
         Grade oldGrade = new Grade(3);
         Grade newGrade = new Grade(4);
-        Rating baseRating = new Rating(UUID.randomUUID(), movie.getMovieId(), oldGrade, LocalDateTime.now());
+        Rating baseRating = new Rating(movie.getMovieId(), oldGrade, LocalDateTime.now());
         List<Rating> userRatings = new ArrayList<>();
         userRatings.add(baseRating);
 

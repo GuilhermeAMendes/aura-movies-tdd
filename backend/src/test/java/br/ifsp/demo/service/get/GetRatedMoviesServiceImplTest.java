@@ -54,7 +54,7 @@ public class GetRatedMoviesServiceImplTest {
         List<Rating> userRatings = new ArrayList<>();
         movies.forEach(movie -> {
             int randomGrade = grader.nextInt(5) + 1;
-            userRatings.add(new Rating(UUID.randomUUID(), movie.getMovieId(), new Grade(randomGrade), LocalDateTime.now()));
+            userRatings.add(new Rating(movie.getMovieId(), new Grade(randomGrade), LocalDateTime.now()));
         });
         User user = User.builder().id(userId)
                 .name("Lucas")
