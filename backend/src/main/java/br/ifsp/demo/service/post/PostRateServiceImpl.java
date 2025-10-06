@@ -6,7 +6,9 @@ import br.ifsp.demo.exception.MovieNotFoundException;
 import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PostRateServiceImpl implements PostRateService {
     private final JpaUserRepository userRepository;
     private final JpaMovieRepository movieRepository;
