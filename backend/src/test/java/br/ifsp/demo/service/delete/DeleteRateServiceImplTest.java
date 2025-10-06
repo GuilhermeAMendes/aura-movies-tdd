@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.exception.MovieNotFoundException;
 import br.ifsp.demo.exception.ReviewNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
@@ -105,5 +106,29 @@ public class DeleteRateServiceImplTest {
 
         //Then
         assertThatThrownBy(() -> sut.deleteRate(request)).isInstanceOf(ReviewNotFoundException.class);
+    }
+
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-5]")
+    @ParameterizedTest
+    @MethodSource("createMovie")
+    @DisplayName("[SC-5.3] - Should reject review deletion for missing movie")
+    void ShouldRejectDeleteMissingMovie(Movie movie) {
+        //Given
+        UUID userId = UUID.randomUUID();
+
+        List<Rating> userRatings = new ArrayList<>();
+
+        User user = User.builder().id(userId).ratings(userRatings).build();
+
+        //Whwn
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findById(movie.getMovieId())).thenReturn(Optional.empty());
+        DeleteRateService.DeleteRateServiceRequestDTO request = new DeleteRateService.DeleteRateServiceRequestDTO(userId, movie.getMovieId());
+
+
+        //Then
+        assertThatThrownBy(() -> sut.deleteRate(request)).isInstanceOf(MovieNotFoundException.class);
     }
 }
