@@ -4,7 +4,7 @@ import br.ifsp.demo.domain.movie.MovieId;
 import java.util.UUID;
 
 public interface DeleteRateService {
-    DeleteRateServiceResponseDTO deleteRate(DeleteRateServiceRequestDTO request);
+    void deleteRate(DeleteRateServiceRequestDTO request);
 
     record DeleteRateServiceRequestDTO(
             UUID userId,

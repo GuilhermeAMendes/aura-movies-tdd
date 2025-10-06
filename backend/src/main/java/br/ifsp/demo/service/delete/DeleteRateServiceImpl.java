@@ -17,7 +17,7 @@ public class DeleteRateServiceImpl implements DeleteRateService {
 
 
     @Override
-    public DeleteRateServiceResponseDTO deleteRate(DeleteRateServiceRequestDTO request) {
+    public void deleteRate(DeleteRateServiceRequestDTO request) {
         User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -29,6 +29,6 @@ public class DeleteRateServiceImpl implements DeleteRateService {
 
         userRepository.save(user);
 
-        return new DeleteRateServiceResponseDTO();
+        new DeleteRateServiceResponseDTO();
     }
 }
