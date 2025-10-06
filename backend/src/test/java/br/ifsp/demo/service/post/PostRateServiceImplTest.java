@@ -6,8 +6,10 @@ import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.domain.user.User;
 import br.ifsp.demo.exception.MovieNotFoundException;
+import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
+import br.ifsp.demo.service.get.GetRecommendationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -93,5 +95,26 @@ public class PostRateServiceImplTest {
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findById(movieToRate.getMovieId());
         verify(userRepository, never()).save(user);
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("[US-1]")
+    @DisplayName("[SC-1.4] - Should throw when user not found")
+    void shouldThrowWhenUserNotFound() {
+        // Given
+        UUID missingUserId = UUID.randomUUID();
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        Grade grade = new Grade(1);
+
+        // When
+        when(userRepository.findById(missingUserId)).thenReturn(Optional.empty());
+
+        // Then
+        assertThatThrownBy(() -> sut.saveRate(new PostRateService.PostRateServiceRequestDTO(missingUserId, movieId, grade)))
+                .isInstanceOf(UserNotFoundException.class);
+        verify(userRepository, times(1)).findById(missingUserId);
+        verify(userRepository, never()).save(any(User.class));
+        verifyNoInteractions(movieRepository);
     }
 }
