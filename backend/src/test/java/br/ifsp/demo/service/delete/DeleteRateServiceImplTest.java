@@ -8,8 +8,10 @@ import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
 import br.ifsp.demo.exception.MovieNotFoundException;
 import br.ifsp.demo.exception.ReviewNotFoundException;
+import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
+import br.ifsp.demo.service.patch.PatchRateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -130,5 +132,24 @@ public class DeleteRateServiceImplTest {
 
         //Then
         assertThatThrownBy(() -> sut.deleteRate(request)).isInstanceOf(MovieNotFoundException.class);
+    }
+
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-5]")
+    @ParameterizedTest
+    @MethodSource("createMovie")
+    @DisplayName("[SC-5.4] - Should reject review deletion for unauthenticated user")
+    void ShouldRejectDeleteUnauthenticatedUser(Movie movie) {
+        //Given
+        UUID userId = UUID.randomUUID();
+
+        //When
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        DeleteRateService.DeleteRateServiceRequestDTO request = new DeleteRateService.DeleteRateServiceRequestDTO(userId, movie.getMovieId());
+
+        //Then
+        assertThatThrownBy(() -> sut.deleteRate(request)).isInstanceOf(UserNotFoundException.class);
+
     }
 }
