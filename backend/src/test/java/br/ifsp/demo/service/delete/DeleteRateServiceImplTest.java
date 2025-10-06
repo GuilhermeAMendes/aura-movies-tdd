@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.movie.Movie;
 import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.domain.user.Rating;
 import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.exception.ReviewNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -81,5 +83,27 @@ public class DeleteRateServiceImplTest {
 
         //Then
         assertThat(user.getRatings()).isEmpty();
+    }
+
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-5]")
+    @ParameterizedTest
+    @MethodSource("createMovie")
+    @DisplayName("[SC-5.2] - Should reject deletion of missing review")
+    void ShouldRejectDeleteMissingReview(Movie movie) {
+        //Given
+        UUID userId = UUID.randomUUID();
+        List<Rating> userRatings = new ArrayList<>();
+
+        User user = User.builder().id(userId).ratings(userRatings).build();
+
+        //When
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findById(movie.getMovieId())).thenReturn(Optional.of(movie));
+        DeleteRateService.DeleteRateServiceRequestDTO request = new DeleteRateService.DeleteRateServiceRequestDTO(userId, movie.getMovieId());
+
+        //Then
+        assertThatThrownBy(() -> sut.deleteRate(request)).isInstanceOf(ReviewNotFoundException.class);
     }
 }
