@@ -3,6 +3,7 @@ package br.ifsp.demo.controller;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import br.ifsp.demo.security.config.JwtService;
 import br.ifsp.demo.service.get.GetRatedMoviesService;
+import br.ifsp.demo.service.post.PostRateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ public class RatingsControllerTest {
     private GetRatedMoviesService getRatedMoviesService;
 
     @MockitoBean
+    private PostRateService postRateService;
+
+    @MockitoBean
     private JwtService jwtService;
 
     @Test
@@ -38,6 +42,18 @@ public class RatingsControllerTest {
     void shouldReturnUnauthorizedWhenNoAuth() throws Exception {
         mockMvc.perform(get("/api/v1/ratings")
                         .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("TDD")
+    @Tag("[US-1]")
+    @DisplayName("[SC-1.5] - Should return 401 when posting a rating without auth")
+    void shouldReturnUnauthorizedWhenPostingRatingWithoutAuth() throws Exception {
+        String ratingBody = "{}";
+        mockMvc.perform(get("/api/v1/ratings")
+                        .contentType(MediaType.APPLICATION_JSON).content(ratingBody))
                 .andExpect(status().isUnauthorized());
     }
 }
