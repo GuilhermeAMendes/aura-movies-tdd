@@ -85,4 +85,16 @@ public class ApiExceptionHandler {
                 .build();
         return new ResponseEntity<>(apiException, notFound);
     }
+
+    @ExceptionHandler(value = MovieNotFoundException.class)
+    public ResponseEntity<?> handleMovieNotFoundException(MovieNotFoundException e){
+        final HttpStatus notFound = NOT_FOUND;
+        final ApiException apiException = ApiException.builder()
+                .status(notFound)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, notFound);
+    }
 }
