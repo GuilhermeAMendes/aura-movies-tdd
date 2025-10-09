@@ -18,6 +18,10 @@ public class MovieId implements Serializable {
         this.id = Objects.requireNonNull(id);
     }
 
+    public MovieId(String id) {
+        this.id = UUID.fromString(Objects.requireNonNull(id));
+    }
+
     public UUID unwrap() {
         return id;
     }
