@@ -125,7 +125,7 @@ public class AuraMoviesTddApi {
                 .name("Jane")
                 .lastname("Smith")
                 .email("jane.smith@email.com")
-                .password(passwordEncoder.encode("password123"))
+                .password(passwordEncoder.encode("senha"))
                 .role(Role.USER)
                 .ratings(new ArrayList<>())
                 .build();
@@ -136,7 +136,7 @@ public class AuraMoviesTddApi {
                 .name("Mike")
                 .lastname("Johnson")
                 .email("mike.johnson@email.com")
-                .password(passwordEncoder.encode("password123"))
+                .password(passwordEncoder.encode("senha"))
                 .role(Role.USER)
                 .ratings(new ArrayList<>())
                 .build();
@@ -147,7 +147,7 @@ public class AuraMoviesTddApi {
                 .name("Sarah")
                 .lastname("Wilson")
                 .email("sarah.wilson@email.com")
-                .password(passwordEncoder.encode("password123"))
+                .password(passwordEncoder.encode("senha"))
                 .role(Role.USER)
                 .ratings(new ArrayList<>())
                 .build();
