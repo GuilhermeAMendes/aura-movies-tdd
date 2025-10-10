@@ -1,5 +1,7 @@
 package br.ifsp.demo.controller;
 
+import br.ifsp.demo.repository.JpaMovieRepository;
+import br.ifsp.demo.repository.JpaUserRepository;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import br.ifsp.demo.security.config.JwtService;
 import br.ifsp.demo.service.get.GetRatedMoviesService;
@@ -8,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -33,6 +36,15 @@ public class RatingsControllerTest {
 
     @MockitoBean
     private JwtService jwtService;
+
+    @MockitoBean
+    private JpaMovieRepository jpaMovieRepository;
+
+    @MockitoBean
+    private JpaUserRepository jpaUserRepository;
+
+    @MockitoBean
+    private CommandLineRunner commandLineRunner;
 
     @Test
     @Tag("UnitTest")
