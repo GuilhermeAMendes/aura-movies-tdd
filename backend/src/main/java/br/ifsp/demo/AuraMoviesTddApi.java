@@ -157,7 +157,7 @@ public class AuraMoviesTddApi {
     }
 
     private void addRatingsToUsers(List<User> users, List<Movie> movies, JpaUserRepository userRepository) {
-        // John's ratings (likes action and comedy)
+        // Lucas' ratings (likes action and comedy)
         User john = users.get(1);
         john.addRating(movies.get(0).getMovieId(), new Grade(5)); // The Dark Knight
         john.addRating(movies.get(1).getMovieId(), new Grade(4)); // Mad Max: Fury Road
