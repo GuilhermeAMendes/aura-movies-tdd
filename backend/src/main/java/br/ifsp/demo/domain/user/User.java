@@ -2,6 +2,7 @@ package br.ifsp.demo.domain.user;
 
 import br.ifsp.demo.domain.movie.Grade;
 import br.ifsp.demo.domain.movie.MovieId;
+import br.ifsp.demo.exception.ReviewNotFoundException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -101,5 +102,12 @@ public class User implements UserDetails {
         Rating foundRating = ratingToUpdate.get();
         foundRating.setGrade(newGrade);
         return foundRating;
+    }
+
+    public void deleteRating(MovieId movieId) {
+        boolean removed = this.ratings.removeIf(rating -> rating.getMovieId().equals(movieId));
+        if (!removed) {
+            throw new ReviewNotFoundException("Rating for this movie not found.");
+        }
     }
 }

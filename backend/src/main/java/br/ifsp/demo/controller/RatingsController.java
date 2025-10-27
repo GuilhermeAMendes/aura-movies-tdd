@@ -1,5 +1,6 @@
 package br.ifsp.demo.controller;
 
+import br.ifsp.demo.domain.user.PostRatingRequest;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import br.ifsp.demo.service.get.GetRatedMoviesService;
 import br.ifsp.demo.service.post.PostRateService;
@@ -29,8 +30,14 @@ public class RatingsController {
 
     @PostMapping
     public ResponseEntity<PostRateService.PostRateServiceResponseDTO> postRatedMovies(
-            @RequestBody PostRateService.PostRateServiceRequestDTO rateServiceRequestDTO) {
-        var response = postRateService.saveRate(rateServiceRequestDTO);
+            @RequestBody PostRatingRequest postRatingRequest) {
+        UUID userId = authenticationInfoService.getAuthenticatedUserId();
+        var request = new PostRateService.PostRateServiceRequestDTO(
+                userId,
+                postRatingRequest.movieId(),
+                postRatingRequest.grade()
+        );
+        var response = postRateService.saveRate(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
