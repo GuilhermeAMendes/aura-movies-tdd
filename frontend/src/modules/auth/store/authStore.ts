@@ -14,6 +14,7 @@ import { ApplicationError } from "@/shared/errors/base/ApplicationError";
 
 // Utils
 import authStorage from "../utils/authStorage";
+import { decodeToken, isValidToken } from "../utils/token";
 
 // Types
 import type {
@@ -24,7 +25,9 @@ import type {
 } from "../types";
 
 interface AuthState {
+  token: string | null;
   isLoading: boolean;
+  isSessionRestored: boolean;
   login: (
     payload: LoginPayload
   ) => Promise<Either<ApplicationError, LoginResponse>>;
@@ -32,10 +35,13 @@ interface AuthState {
     payload: RegisterPayload
   ) => Promise<Either<ApplicationError, RegisterResponse>>;
   logout: () => void;
+  restoredSession: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   devtools((set) => ({
+    token: null,
+    isSessionRestored: false,
     isLoading: false,
 
     login: async (payload: LoginPayload) => {
@@ -48,9 +54,10 @@ export const useAuthStore = create<AuthState>()(
         return result;
       }
 
-      authStorage.setToken(result.value.token);
+      const { token } = result.value;
+      authStorage.setToken(token);
 
-      set({ isLoading: false });
+      set({ isLoading: false, token });
       return result;
     },
 
@@ -70,6 +77,31 @@ export const useAuthStore = create<AuthState>()(
 
     logout: () => {
       authStorage.clear();
+    },
+
+    restoreSession: () => {
+      let fetchToken = null;
+
+      try {
+        const token = authStorage.getToken();
+
+        if (!token) {
+          throw new Error("No tokens found");
+        }
+
+        const decodedToken = decodeToken(token);
+
+        if (!isValidToken(decodeToken)) {
+          authStorage.clear();
+          throw new Error("Invalid token");
+        }
+
+        fetchToken = token;
+      } catch (error) {
+        authStorage.clear();
+      } finally {
+        set({ isSessionRestored: false, token: fetchToken });
+      }
     },
   }))
 );
