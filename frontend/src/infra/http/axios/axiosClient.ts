@@ -4,8 +4,8 @@ import axios from "axios";
 // Types
 import type { AxiosError, InternalAxiosRequestConfig } from "axios";
 
-// Utils
-import { authStorage } from "@/modules/auth/utils/authStorage";
+// Store
+import { useAuthStore } from "@/modules/auth/store/authStore";
 
 // Constants
 import { ERROR_CODE } from "@/shared/errors/constants/error";
@@ -23,7 +23,7 @@ export const AxiosClient = axios.create({
 
 AxiosClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = authStorage.getToken();
+    const token = useAuthStore.getState().token;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -45,15 +45,15 @@ AxiosClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const requestUrl = originalRequest.url || "";
-
     const { status } = error.response;
+
+    const requestUrl = originalRequest.url || "";
 
     const isAuthError = AUTH_ERROR_CODES.every((code) => code !== status);
     const isAuthEndpoint = AUTH_URLS.some((url) => requestUrl.includes(url));
 
     if (isAuthError && !isAuthEndpoint) {
-      console.warn("Expires session.");
+      useAuthStore.getState().logout();
     }
 
     return Promise.reject(error);
