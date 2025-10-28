@@ -1,6 +1,6 @@
 // Infra
 import { AxiosClient } from "@/infra/http/axios/axiosClient";
-import { isAxiosError } from "axios"; // <--- 1. Importe o type guard do Axios
+import { isAxiosError } from "axios";
 
 // Type Guard
 import { type Either, right } from "@/shared/patterns/either";
