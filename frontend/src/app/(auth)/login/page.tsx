@@ -81,7 +81,7 @@ export default function LoginPage() {
       description: "Redirecionando para a página principal...",
     });
 
-    navigateTo("/profile");
+    navigateTo("/recommendations");
     return;
   };
 
