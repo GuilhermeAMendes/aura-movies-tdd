@@ -18,7 +18,10 @@ export default async function postRating(
   payload: PostRatingPayload
 ): Promise<Either<ApplicationError, PostRatingResponse>> {
   try {
-    const { data: response } = await AxiosClient.post("ratings", payload);
+    const { data: response } = await AxiosClient.post<PostRatingResponse>(
+      "ratings",
+      payload
+    );
     return right(response);
   } catch (error) {
     let message = "Restore ratings failed";
