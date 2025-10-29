@@ -49,7 +49,7 @@ AxiosClient.interceptors.response.use(
 
     const requestUrl = originalRequest.url || "";
 
-    const isAuthError = AUTH_ERROR_CODES.every((code) => code !== status);
+    const isAuthError = AUTH_ERROR_CODES.some((code) => code === status);
     const isAuthEndpoint = AUTH_URLS.some((url) => requestUrl.includes(url));
 
     if (isAuthError && !isAuthEndpoint) {
