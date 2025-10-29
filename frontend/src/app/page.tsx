@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { useNavigationHandler } from "@/shared/hooks/navigation/useNavigation";
+import { Header } from "@/components/layout/Header";
 
 export default function HomePage() {
   const { navigateTo } = useNavigationHandler();
@@ -15,23 +16,7 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 w-full border-b bg-background">
-        <div className="container flex h-16 items-center justify-between py-4 px-6 md:px-8">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="font-bold text-2xl tracking-tight text-primary">
-              Aura
-            </span>
-          </Link>
-
-          <Button
-            onClick={handleLoginClick}
-            variant="ghost"
-            className="text-lg"
-          >
-            Login
-          </Button>
-        </div>
-      </header>
+      <Header />
       <main className="flex-1 flex items-center justify-center p-4 md:p-8">
         <section className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16 max-w-6xl w-full">
           <div className="relative w-full max-w-md h-64 md:h-96 flex-1">
