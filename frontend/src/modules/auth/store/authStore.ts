@@ -79,28 +79,26 @@ export const useAuthStore = create<AuthState>()(
       authStorage.clear();
     },
 
-    restoreSession: () => {
+    restoredSession: () => {
       let fetchToken = null;
 
       try {
         const token = authStorage.getToken();
 
-        if (!token) {
-          throw new Error("No tokens found");
-        }
+        if (!token) throw new Error("No tokens found");
 
         const decodedToken = decodeToken(token);
 
-        if (!isValidToken(decodeToken)) {
+        if (!isValidToken(decodedToken)) {
           authStorage.clear();
           throw new Error("Invalid token");
         }
 
         fetchToken = token;
-      } catch (error) {
+      } catch {
         authStorage.clear();
       } finally {
-        set({ isSessionRestored: false, token: fetchToken });
+        set({ isSessionRestored: true, token: fetchToken });
       }
     },
   }))
