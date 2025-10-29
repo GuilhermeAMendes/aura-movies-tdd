@@ -1,11 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { useNavigationHandler } from "@/shared/hooks/navigation/useNavigation";
-import { Header } from "@/components/layout/Header";
 
 export default function HomePage() {
   const { navigateTo } = useNavigationHandler();
@@ -16,7 +14,6 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <Header />
       <main className="flex-1 flex items-center justify-center p-4 md:p-8">
         <section className="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-16 max-w-6xl w-full">
           <div className="relative w-full max-w-md h-64 md:h-96 flex-1">
@@ -49,10 +46,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-
-      <footer className="w-full border-t bg-background text-center py-4 text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Aura. Todos os direitos reservados.
-      </footer>
     </div>
   );
 }
