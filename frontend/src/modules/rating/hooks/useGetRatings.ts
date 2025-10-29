@@ -30,7 +30,7 @@ export function useGetRatings(): UseGetRatingsResponse {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<ApplicationError | null>(null);
 
-  const { token } = useAuthStore();
+  const { token, isSessionRestored } = useAuthStore();
 
   const loadRatings = async () => {
     setIsLoading(true);
@@ -52,6 +52,7 @@ export function useGetRatings(): UseGetRatingsResponse {
   };
 
   useEffect(() => {
+    if (!isSessionRestored) return;
     if (!token) {
       setIsLoading(false);
       setRatings([]);
@@ -59,7 +60,7 @@ export function useGetRatings(): UseGetRatingsResponse {
     }
 
     loadRatings();
-  }, [token]);
+  }, [token, isSessionRestored]);
 
   return { ratings, isLoading, error };
 }
