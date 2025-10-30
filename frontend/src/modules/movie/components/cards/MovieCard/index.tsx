@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 // Types
-import type { Genre, Movie } from "@/modules/movie/types";
+import type { Movie } from "@/modules/movie/types";
 
 // Utils
 import { getIconForGenre } from "@/modules/movie/utils/genreIcons";
