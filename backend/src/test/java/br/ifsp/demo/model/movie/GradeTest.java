@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.movie;
+package br.ifsp.demo.model.movie;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

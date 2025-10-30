@@ -1,7 +1,7 @@
 package br.ifsp.demo;
 
-import br.ifsp.demo.domain.movie.*;
-import br.ifsp.demo.domain.user.*;
+import br.ifsp.demo.model.movie.*;
+import br.ifsp.demo.model.user.*;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
 import org.springframework.boot.CommandLineRunner;

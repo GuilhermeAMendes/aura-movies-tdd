@@ -1,6 +1,6 @@
 package br.ifsp.demo.service.get;
 
-import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.model.user.User;
 import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaUserRepository;
 import org.springframework.stereotype.Service;

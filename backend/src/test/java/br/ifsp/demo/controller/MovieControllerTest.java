@@ -1,10 +1,10 @@
 package br.ifsp.demo.controller;
 
-import br.ifsp.demo.domain.movie.Genre;
-import br.ifsp.demo.domain.movie.Movie;
-import br.ifsp.demo.domain.movie.MovieId;
-import br.ifsp.demo.domain.user.Role;
-import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.model.movie.Genre;
+import br.ifsp.demo.model.movie.Movie;
+import br.ifsp.demo.model.movie.MovieId;
+import br.ifsp.demo.model.user.Role;
+import br.ifsp.demo.model.user.User;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;

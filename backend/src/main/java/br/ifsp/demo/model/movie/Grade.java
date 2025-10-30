@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.movie;
+package br.ifsp.demo.model.movie;
 
 import br.ifsp.demo.exception.InvalidNoteInterval;
 import com.fasterxml.jackson.annotation.JsonCreator;

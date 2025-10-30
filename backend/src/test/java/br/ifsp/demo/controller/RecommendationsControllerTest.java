@@ -1,7 +1,7 @@
 package br.ifsp.demo.controller;
 
-import br.ifsp.demo.domain.user.Role;
-import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.model.user.Role;
+import br.ifsp.demo.model.user.User;
 import br.ifsp.demo.repository.JpaMovieRepository;
 import br.ifsp.demo.repository.JpaUserRepository;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;

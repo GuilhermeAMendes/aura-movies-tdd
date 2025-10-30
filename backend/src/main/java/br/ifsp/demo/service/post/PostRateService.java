@@ -1,8 +1,8 @@
 package br.ifsp.demo.service.post;
 
-import br.ifsp.demo.domain.movie.Grade;
-import br.ifsp.demo.domain.movie.MovieId;
-import br.ifsp.demo.domain.user.Rating;
+import br.ifsp.demo.model.movie.Grade;
+import br.ifsp.demo.model.movie.MovieId;
+import br.ifsp.demo.model.user.Rating;
 
 import java.util.UUID;
 

@@ -1,6 +1,6 @@
 package br.ifsp.demo.controller;
 
-import br.ifsp.demo.domain.user.PostRatingRequest;
+import br.ifsp.demo.model.user.PostRatingRequest;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import br.ifsp.demo.service.get.GetRatedMoviesService;
 import br.ifsp.demo.service.patch.PatchRateService;

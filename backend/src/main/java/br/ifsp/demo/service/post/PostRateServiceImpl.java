@@ -1,7 +1,7 @@
 package br.ifsp.demo.service.post;
 
-import br.ifsp.demo.domain.user.Rating;
-import br.ifsp.demo.domain.user.User;
+import br.ifsp.demo.model.user.Rating;
+import br.ifsp.demo.model.user.User;
 import br.ifsp.demo.exception.MovieNotFoundException;
 import br.ifsp.demo.exception.UserNotFoundException;
 import br.ifsp.demo.repository.JpaMovieRepository;

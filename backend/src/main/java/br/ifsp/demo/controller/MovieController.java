@@ -1,6 +1,6 @@
 package br.ifsp.demo.controller;
 
-import br.ifsp.demo.domain.movie.MovieId;
+import br.ifsp.demo.model.movie.MovieId;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import br.ifsp.demo.service.get.GetAllMoviesService;
 import br.ifsp.demo.service.get.GetMovieByIdService;

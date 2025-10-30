@@ -1,6 +1,6 @@
 package br.ifsp.demo.service.get;
 
-import br.ifsp.demo.domain.movie.Movie;
+import br.ifsp.demo.model.movie.Movie;
 
 import java.util.List;
 import java.util.UUID;

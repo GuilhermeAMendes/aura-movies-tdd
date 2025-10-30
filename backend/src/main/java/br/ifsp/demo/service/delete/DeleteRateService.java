@@ -1,6 +1,6 @@
 package br.ifsp.demo.service.delete;
 
-import br.ifsp.demo.domain.movie.MovieId;
+import br.ifsp.demo.model.movie.MovieId;
 import java.util.UUID;
 
 public interface DeleteRateService {
