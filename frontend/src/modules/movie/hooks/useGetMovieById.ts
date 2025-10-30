@@ -1,0 +1,72 @@
+"use client";
+
+// External Library
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+
+// Store
+import { useAuthStore } from "@/modules/auth/store/authStore";
+
+// Service
+import getMovieByIdService from "../service/get/getMovieById";
+
+// Error
+import { ApplicationError } from "@/shared/errors/base/ApplicationError";
+
+// Type Guard
+import { isLeft } from "@/shared/patterns/either";
+
+// Types
+import type { Movie } from "@/modules/movie/types";
+
+interface UseGetMovieByIdPayload {
+  id: string;
+}
+
+interface UseGetMovieByIdResponse {
+  movie: Movie | null;
+  isLoading: boolean;
+  error: ApplicationError | null;
+}
+
+export function useGetMovieById({
+  id,
+}: UseGetMovieByIdPayload): UseGetMovieByIdResponse {
+  const [movie, setMovie] = useState<Movie | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<ApplicationError | null>(null);
+
+  const { token, isSessionRestored } = useAuthStore();
+
+  const loadMovie = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    const result = await getMovieByIdService({ id });
+
+    if (isLeft(result)) {
+      setError(result.value);
+      toast.error("Erro ao buscar filme", {
+        description: result.value.message,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    setMovie(result.value.movie);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (!isSessionRestored) return;
+    if (!token) {
+      setIsLoading(false);
+      setMovie(null);
+      return;
+    }
+
+    loadMovie();
+  }, [token, isSessionRestored, id]);
+
+  return { movie, isLoading, error };
+}
