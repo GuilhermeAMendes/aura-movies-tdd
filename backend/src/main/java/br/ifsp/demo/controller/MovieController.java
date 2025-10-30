@@ -2,6 +2,7 @@ package br.ifsp.demo.controller;
 
 import br.ifsp.demo.domain.movie.MovieId;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
+import br.ifsp.demo.service.get.GetAllMoviesService;
 import br.ifsp.demo.service.get.GetMovieByIdService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ public class MovieController {
 
     private final AuthenticationInfoService authenticationInfoService;
     private final GetMovieByIdService getMovieByIdService;
+    private final GetAllMoviesService getAllMoviesService;
 
     @GetMapping("/{id}")
     public ResponseEntity<GetMovieByIdService.GetMovieByIdResponseDTO> getMovieById(@PathVariable String id) {
@@ -32,4 +34,13 @@ public class MovieController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping
+    public ResponseEntity<GetAllMoviesService.GetAllMoviesResponseDTO> getAllMovies() {
+        UUID userId = authenticationInfoService.getAuthenticatedUserId();
+
+        var request = new GetAllMoviesService.GetAllMoviesRequestDTO(userId);
+        var response = getAllMoviesService.getAllMovies(request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
