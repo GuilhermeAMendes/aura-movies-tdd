@@ -1,0 +1,19 @@
+package br.ifsp.demo.service.get;
+
+import br.ifsp.demo.domain.movie.Movie;
+
+import java.util.List;
+import java.util.UUID;
+
+public interface GetAllMoviesService {
+
+    GetAllMoviesResponseDTO getAllMovies(GetAllMoviesRequestDTO requestDTO);
+
+    record GetAllMoviesRequestDTO(
+            UUID userId
+    ) { }
+
+    record GetAllMoviesResponseDTO(
+            List<Movie> movies
+    ) { }
+}
