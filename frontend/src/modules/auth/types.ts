@@ -1,5 +1,15 @@
-// Types
-import { User } from "@/types/user";
+export interface JWTClaims {
+  exp: number;
+  sub: string;
+  iat: number;
+}
+
+export interface User {
+  name: string;
+  lastname: string;
+  email: string;
+  password: string;
+}
 
 export interface LoginPayload {
   username: string;
