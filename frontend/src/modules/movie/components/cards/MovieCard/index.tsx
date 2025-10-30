@@ -2,7 +2,6 @@
 
 // External Library
 import Link from "next/link";
-import { FilmIcon } from "lucide-react";
 
 // Components
 import {
@@ -19,24 +18,11 @@ import type { Genre, Movie } from "@/modules/movie/types";
 
 // Utils
 import { getIconForGenre } from "@/modules/movie/utils/genreIcons";
+import genreLabelMap from "@/modules/movie/utils/formatterLabel";
 
 interface MovieCardProps {
   movie: Movie;
 }
-
-// Constants
-const genreLabelMap: Record<Genre, string> = {
-  ACTION: "Ação",
-  ADVENTURE: "Aventura",
-  COMEDY: "Comédia",
-  DOCUMENTARY: "Documentário",
-  DRAMA: "Drama",
-  FANTASY: "Fantasia",
-  HORROR: "Terror",
-  ROMANCE: "Romance",
-  SCI_FI: "SCI-FI",
-  THRILLER: "Suspense",
-};
 
 export function MovieCard({ movie }: MovieCardProps) {
   const IconComponent = getIconForGenre(movie.genre);
@@ -56,7 +42,10 @@ export function MovieCard({ movie }: MovieCardProps) {
         </CardContent>
 
         <CardFooter className="p-4 pt-2">
-          <Badge variant="secondary" className="capitalize bg-blue-300">
+          <Badge
+            variant="secondary"
+            className="capitalize bg-blue-300 text-white"
+          >
             {getGenreLabel}
           </Badge>
         </CardFooter>
