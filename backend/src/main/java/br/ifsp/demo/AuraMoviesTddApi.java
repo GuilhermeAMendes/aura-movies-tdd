@@ -1,9 +1,13 @@
 package br.ifsp.demo;
 
-import br.ifsp.demo.model.movie.*;
-import br.ifsp.demo.model.user.*;
-import br.ifsp.demo.repository.JpaMovieRepository;
-import br.ifsp.demo.repository.JpaUserRepository;
+import br.ifsp.demo.domain.model.movie.Genre;
+import br.ifsp.demo.domain.model.movie.Grade;
+import br.ifsp.demo.domain.model.movie.Movie;
+import br.ifsp.demo.domain.model.movie.MovieId;
+import br.ifsp.demo.domain.model.user.Role;
+import br.ifsp.demo.domain.model.user.User;
+import br.ifsp.demo.domain.repository.JpaMovieRepository;
+import br.ifsp.demo.domain.repository.JpaUserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
