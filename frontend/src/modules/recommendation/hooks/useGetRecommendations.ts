@@ -18,6 +18,7 @@ import { isLeft } from "@/shared/patterns/either";
 
 // Types
 import type { Movie } from "@/modules/movie/types";
+import { shuffleContent } from "@/shared/utils/helper/functions/shuffleContent";
 
 interface UseGetRecommendationsResponse {
   movies: Movie[];
@@ -47,7 +48,9 @@ export function useGetRecommendations(): UseGetRecommendationsResponse {
       return;
     }
 
-    setMovies(result.value.recommendations);
+    const { recommendations } = result.value;
+    const shuffleRecommendations = shuffleContent(recommendations);
+    setMovies(shuffleRecommendations);
     setIsLoading(false);
   };
 
