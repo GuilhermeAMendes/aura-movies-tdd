@@ -4,7 +4,7 @@ import br.ifsp.demo.domain.model.movie.Genre;
 import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.Movie;
 import br.ifsp.demo.domain.model.movie.MovieId;
-import br.ifsp.demo.domain.model.user.Rating;
+import br.ifsp.demo.domain.model.rating.Rating;
 import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.exception.UserNotFoundException;
 import br.ifsp.demo.domain.repository.JpaUserRepository;

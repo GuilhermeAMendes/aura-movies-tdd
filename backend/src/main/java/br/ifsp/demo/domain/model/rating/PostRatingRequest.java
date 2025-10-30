@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.model.user;
+package br.ifsp.demo.domain.model.rating;
 
 import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.MovieId;

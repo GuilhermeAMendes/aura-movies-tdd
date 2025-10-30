@@ -1,6 +1,6 @@
 package br.ifsp.demo.domain.service.get;
 
-import br.ifsp.demo.domain.model.user.Rating;
+import br.ifsp.demo.domain.model.rating.Rating;
 
 import java.util.List;
 import java.util.UUID;

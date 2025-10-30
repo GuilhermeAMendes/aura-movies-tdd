@@ -1,6 +1,6 @@
 package br.ifsp.demo.domain.service.patch;
 
-import br.ifsp.demo.domain.model.user.Rating;
+import br.ifsp.demo.domain.model.rating.Rating;
 import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.exception.ReviewNotFoundException;
