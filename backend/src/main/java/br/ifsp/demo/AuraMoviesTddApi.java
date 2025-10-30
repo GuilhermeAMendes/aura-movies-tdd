@@ -119,7 +119,7 @@ public class AuraMoviesTddApi {
                 .ratings(new ArrayList<>())
                 .build();
         users.add(lucas);
-        
+
         User jane = User.builder()
                 .id(UUID.randomUUID())
                 .name("Jane")
@@ -152,7 +152,19 @@ public class AuraMoviesTddApi {
                 .ratings(new ArrayList<>())
                 .build();
         users.add(sarah);
-        
+
+
+        User turing = User.builder()
+                .id(UUID.randomUUID())
+                .name("Alan")
+                .lastname("Turing")
+                .email("turing@gmail.com")
+                .password(passwordEncoder.encode("senha"))
+                .role(Role.USER)
+                .ratings(new ArrayList<>())
+                .build();
+        users.add(turing);
+
         return users;
     }
 
