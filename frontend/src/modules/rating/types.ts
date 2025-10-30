@@ -16,3 +16,8 @@ export interface PostRatingPayload extends Omit<Rating, "lastGradedAt"> {}
 export interface PostRatingResponse {
   rating: Rating;
 }
+
+export interface PatchRatingPayload {
+  movieId: string;
+  grade: string;
+}
