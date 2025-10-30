@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface GetAllMoviesService {
 
-    GetAllMoviesResponseDTO getAllMovies(GetAllMoviesRequestDTO requestDTO);
+    GetAllMoviesResponseDTO getAllMovies(GetAllMoviesRequestDTO request);
 
     record GetAllMoviesRequestDTO(
             UUID userId
