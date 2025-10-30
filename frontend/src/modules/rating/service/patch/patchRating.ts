@@ -12,19 +12,16 @@ import { ApplicationError } from "@/shared/errors/base/ApplicationError";
 import errorFactory from "@/shared/errors/factory/errorFactory";
 
 // Types
-import type { PostRatingPayload, PostRatingResponse } from "../types";
+import type { PatchRatingPayload } from "../../types";
 
-export default async function postRating(
-  payload: PostRatingPayload
-): Promise<Either<ApplicationError, PostRatingResponse>> {
+export default async function patchRating(
+  payload: PatchRatingPayload
+): Promise<Either<ApplicationError, void>> {
   try {
-    const { data: response } = await AxiosClient.post<PostRatingResponse>(
-      "ratings",
-      payload
-    );
+    const { data: response } = await AxiosClient.post<void>("ratings", payload);
     return right(response);
   } catch (error) {
-    let message = "Restore ratings failed";
+    let message = "Update rating failed";
 
     if (isAxiosError(error)) {
       message =

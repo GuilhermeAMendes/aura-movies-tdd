@@ -12,20 +12,18 @@ import { ApplicationError } from "@/shared/errors/base/ApplicationError";
 import errorFactory from "@/shared/errors/factory/errorFactory";
 
 // Types
-import type { GetMovieByIdPayload, GetMovieByIdResponse } from "../types";
+import type { GetRatingResponse } from "../../types";
 
-export default async function getMovieById({
-  id,
-}: GetMovieByIdPayload): Promise<
-  Either<ApplicationError, GetMovieByIdResponse>
+export default async function getRatings(): Promise<
+  Either<ApplicationError, GetRatingResponse>
 > {
   try {
-    const { data: response } = await AxiosClient.get<GetMovieByIdResponse>(
-      `movies/${encodeURIComponent(id)}`
+    const { data: response } = await AxiosClient.get<GetRatingResponse>(
+      "ratings"
     );
     return right(response);
   } catch (error) {
-    let message = "Restore movie failed";
+    let message = "Restore ratings failed";
 
     if (isAxiosError(error)) {
       message =
@@ -36,6 +34,6 @@ export default async function getMovieById({
       message = error.message;
     }
 
-    return errorFactory("not_found", message);
+    return errorFactory("custom", message);
   }
 }

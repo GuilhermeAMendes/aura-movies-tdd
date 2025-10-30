@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/modules/auth/store/authStore";
 
 // Service
-import getRatingsService from "../service/getRatings";
+import getRatingsService from "../service/get/getRatings";
 
 // Error
 import { ApplicationError } from "@/shared/errors/base/ApplicationError";

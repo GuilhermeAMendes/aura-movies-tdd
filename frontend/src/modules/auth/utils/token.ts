@@ -2,7 +2,7 @@
 import { jwtDecode } from "jwt-decode";
 
 // Types
-import type { JWTClaims } from "@types/token";
+import type { JWTClaims } from "@/types/token";
 
 export const decodeToken = (tokenEntry: string): JWTClaims => {
   return jwtDecode<JWTClaims>(tokenEntry);
