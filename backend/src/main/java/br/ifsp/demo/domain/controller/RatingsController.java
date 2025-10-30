@@ -1,6 +1,5 @@
 package br.ifsp.demo.domain.controller;
 
-import br.ifsp.demo.domain.model.rating.PostRatingRequest;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import br.ifsp.demo.domain.service.get.GetRatedMoviesService;
 import br.ifsp.demo.domain.service.patch.PatchRateService;
@@ -32,7 +31,7 @@ public class RatingsController {
 
     @PostMapping
     public ResponseEntity<PostRateService.PostRateServiceResponseDTO> postRatedMovies(
-            @RequestBody PostRatingRequest postRatingRequest) {
+            @RequestBody PostRateService.PostRateServiceRequestDTO postRatingRequest) {
         UUID userId = authenticationInfoService.getAuthenticatedUserId();
         var request = new PostRateService.PostRateServiceRequestDTO(
                 userId,
