@@ -150,4 +150,90 @@ public class GetRecommendationServiceImplTest {
         verify(userRepository, times(1)).findById(missingUserId);
         verifyNoInteractions(movieRepository);
     }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return all movies when user ratings is null")
+    void shouldReturnAllMoviesWhenUserRatingsIsNull() {
+        UUID userId = UUID.randomUUID();
+        User user = User.builder()
+                .id(userId)
+                .name("Lucas")
+                .lastname("Java")
+                .email("lucasjava@gmail.com")
+                .password("secret")
+                .ratings(null)
+                .build();
+        List<Movie> mockMovieList = createMockMovieList();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findAll()).thenReturn(mockMovieList);
+
+        List<Movie> result = sut.recommendMovies(new GetRecommendationService.RecommendationServiceRequestDTO(userId)).recommendations();
+
+        assertThat(result).isNotNull();
+        assertThat(result).isNotEmpty();
+        assertThat(result).hasSize(mockMovieList.size());
+        verify(userRepository, times(1)).findById(userId);
+        verify(movieRepository, times(1)).findAll();
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should filter movies with grade less than 4")
+    void shouldFilterMoviesWithGradeLessThan4() {
+        UUID userId = UUID.randomUUID();
+        List<Movie> mockMovieList = createMockMovieList();
+        Movie ratedMovie = mockMovieList.getFirst();
+
+        Rating lowRating = new Rating(ratedMovie.getMovieId(), new Grade(3), LocalDateTime.now());
+        User user = User.builder()
+                .id(userId)
+                .name("Lucas")
+                .lastname("Java")
+                .email("lucasjava@gmail.com")
+                .password("secret")
+                .ratings(List.of(lowRating))
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findAll()).thenReturn(mockMovieList);
+
+        List<Movie> result = sut.recommendMovies(new GetRecommendationService.RecommendationServiceRequestDTO(userId)).recommendations();
+
+        assertThat(result).isNotNull();
+        verify(userRepository, times(1)).findById(userId);
+        verify(movieRepository, times(1)).findAll();
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should handle rating with null grade")
+    void shouldHandleRatingWithNullGrade() {
+        UUID userId = UUID.randomUUID();
+        List<Movie> mockMovieList = createMockMovieList();
+        Movie ratedMovie = mockMovieList.getFirst();
+
+        Rating ratingWithNullGrade = new Rating(ratedMovie.getMovieId(), null, LocalDateTime.now());
+        User user = User.builder()
+                .id(userId)
+                .name("Lucas")
+                .lastname("Java")
+                .email("lucasjava@gmail.com")
+                .password("secret")
+                .ratings(List.of(ratingWithNullGrade))
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findAll()).thenReturn(mockMovieList);
+
+        List<Movie> result = sut.recommendMovies(new GetRecommendationService.RecommendationServiceRequestDTO(userId)).recommendations();
+
+        assertThat(result).isNotNull();
+        verify(userRepository, times(1)).findById(userId);
+        verify(movieRepository, times(1)).findAll();
+    }
 }
