@@ -3,6 +3,7 @@ package br.ifsp.demo.controller;
 import br.ifsp.demo.domain.user.PostRatingRequest;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import br.ifsp.demo.service.get.GetRatedMoviesService;
+import br.ifsp.demo.service.patch.PatchRateService;
 import br.ifsp.demo.service.post.PostRateService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,5 +40,18 @@ public class RatingsController {
         );
         var response = postRateService.saveRate(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PatchMapping
+    public ResponseEntity<PostRateService.PostRateServiceResponseDTO> postRatedMovies(
+            @RequestBody PatchRateService.PatchRateServiceRequestDTO patchRateRequest) {
+        UUID userId = authenticationInfoService.getAuthenticatedUserId();
+        var request = new PostRateService.PostRateServiceRequestDTO(
+                userId,
+                patchRateRequest.movieId(),
+                patchRateRequest.grade()
+        );
+        var response = postRateService.saveRate(request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
 }
