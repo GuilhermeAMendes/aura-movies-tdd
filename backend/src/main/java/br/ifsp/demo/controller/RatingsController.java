@@ -20,6 +20,7 @@ public class RatingsController {
     private final AuthenticationInfoService authenticationInfoService;
     private final GetRatedMoviesService getRatedMoviesService;
     private final PostRateService postRateService;
+    private final PatchRateService patchRateService;
 
     @GetMapping
     public ResponseEntity<GetRatedMoviesService.RatedServiceResponseDTO> getRatedMoviesFromUser() {
@@ -43,15 +44,15 @@ public class RatingsController {
     }
 
     @PatchMapping
-    public ResponseEntity<PostRateService.PostRateServiceResponseDTO> postRatedMovies(
+    public ResponseEntity<PatchRateService.PatchRateServiceResponseDTO> patchRatedMovies(
             @RequestBody PatchRateService.PatchRateServiceRequestDTO patchRateRequest) {
         UUID userId = authenticationInfoService.getAuthenticatedUserId();
-        var request = new PostRateService.PostRateServiceRequestDTO(
+        var request = new PatchRateService.PatchRateServiceRequestDTO(
                 userId,
                 patchRateRequest.movieId(),
                 patchRateRequest.grade()
         );
-        var response = postRateService.saveRate(request);
+        var response = patchRateService.patchRate(request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
 }
