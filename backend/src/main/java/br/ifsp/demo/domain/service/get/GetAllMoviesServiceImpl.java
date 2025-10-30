@@ -1,7 +1,7 @@
 package br.ifsp.demo.domain.service.get;
 
 import br.ifsp.demo.domain.model.movie.Movie;
-import br.ifsp.demo.domain.model.user.User;
+import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.exception.UserNotFoundException;
 import br.ifsp.demo.domain.repository.JpaMovieRepository;
 import br.ifsp.demo.domain.repository.JpaUserRepository;

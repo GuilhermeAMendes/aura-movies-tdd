@@ -1,8 +1,9 @@
-package br.ifsp.demo.domain.model.user;
+package br.ifsp.demo.security.auth;
 
 import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.MovieId;
 import br.ifsp.demo.domain.exception.ReviewNotFoundException;
+import br.ifsp.demo.domain.model.user.Rating;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;

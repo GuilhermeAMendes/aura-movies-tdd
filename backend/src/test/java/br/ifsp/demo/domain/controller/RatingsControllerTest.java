@@ -1,11 +1,10 @@
 package br.ifsp.demo.domain.controller;
 
-import br.ifsp.demo.domain.controller.RatingsController;
 import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.MovieId;
 import br.ifsp.demo.domain.model.user.Rating;
-import br.ifsp.demo.domain.model.user.Role;
-import br.ifsp.demo.domain.model.user.User;
+import br.ifsp.demo.security.auth.Role;
+import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.repository.JpaMovieRepository;
 import br.ifsp.demo.domain.repository.JpaUserRepository;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;

@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.model.user;
+package br.ifsp.demo.security.auth;
 
 public enum Role {
     USER,
