@@ -60,7 +60,7 @@ export default function MovieDetailPage() {
     const labelFormatter = genreLabelMap[movie.genre];
 
     return (
-      <div className="container mx-auto max-w-6xl p-4 md:p-8">
+      <div className="container mx-auto max-w-6xl p-4 md:p-8 flex-1">
         <div className="flex flex-col md:flex-row gap-8 md:gap-12">
           <div className="flex-none w-full md:w-1/3 flex items-center justify-center p-8 bg-muted rounded-lg aspect-square md:aspect-[3/4] shadow-inner">
             <IconComponent className="w-48 h-48 text-gray-700" />
