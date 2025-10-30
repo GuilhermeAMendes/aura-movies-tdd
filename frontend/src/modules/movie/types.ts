@@ -19,3 +19,11 @@ export interface Movie {
   title: string;
   genre: Genre;
 }
+
+export interface GetMovieByIdPayload {
+  id: string;
+}
+
+export interface GetMovieByIdResponse {
+  movie: Movie;
+}
