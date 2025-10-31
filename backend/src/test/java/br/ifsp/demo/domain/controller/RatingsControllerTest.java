@@ -1,6 +1,7 @@
 package br.ifsp.demo.domain.controller;
 
 import br.ifsp.demo.domain.exception.ApiExceptionHandler;
+import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.MovieId;
 import br.ifsp.demo.domain.model.rating.Rating;
@@ -33,8 +34,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = RatingsController.class)
@@ -223,8 +226,41 @@ public class RatingsControllerTest {
                 .build();
 
         mockMvc.perform(delete("/api/v1/ratings/{movieId}", movieId.unwrap())
-                .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return 404 when delete rate movie is not found")
+    void shouldReturn404WhenDeleteRatingMovieNotFound() throws Exception {
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        UUID userId = UUID.randomUUID();
+        User mockUser = User.builder()
+                .id(userId)
+                .name("Test")
+                .lastname("User")
+                .email("test@example.com")
+                .password("password")
+                .role(Role.USER)
+                .build();
+
+        String exceptionMessage = "Movie not found";
+
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(userId);
+
+        doThrow(new MovieNotFoundException(exceptionMessage))
+                .when(deleteRateService)
+                .deleteRate(any(DeleteRateService.DeleteRateServiceRequestDTO.class));
+
+        mockMvc.perform(delete("/api/v1/ratings/{movieId}", movieId.unwrap())
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(exceptionMessage))
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"));
     }
 }
