@@ -19,6 +19,8 @@ import br.ifsp.demo.security.config.SecurityConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -208,6 +210,36 @@ public class RatingsControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(status().isNoContent());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-5, -1, 6, 10})
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return 400 when patching rating with invalid grade interval")
+    void shouldReturn400WhenPatchingRatingWithInvalidGradeInterval(int grade) throws Exception {
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        User mockUser = createUserMock();
+        String exceptionMessage = "Grade must be between 0 and 5";
+
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
+
+        String jsonContent = String.format(
+                """
+                        {
+                          "grade": "%d"
+                        }""",
+                grade
+        );
+
+        mockMvc.perform(patch("/api/v1/ratings/{movieId}", movieId.unwrap())
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(exceptionMessage))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"));
     }
 
     @Test
