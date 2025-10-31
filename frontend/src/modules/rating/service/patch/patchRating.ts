@@ -17,8 +17,12 @@ import type { PatchRatingPayload } from "../../types";
 export default async function patchRating(
   payload: PatchRatingPayload
 ): Promise<Either<ApplicationError, void>> {
+  const { grade, movieId } = payload;
   try {
-    const { data: response } = await AxiosClient.post<void>("ratings", payload);
+    const { data: response } = await AxiosClient.patch<void>(
+      `ratings/${encodeURIComponent(movieId)}`,
+      grade
+    );
     return right(response);
   } catch (error) {
     let message = "Update rating failed";
