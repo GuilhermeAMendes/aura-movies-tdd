@@ -1,5 +1,6 @@
 package br.ifsp.demo.domain.controller;
 
+import br.ifsp.demo.domain.model.movie.MovieId;
 import br.ifsp.demo.domain.service.delete.DeleteRateService;
 import br.ifsp.demo.domain.service.get.GetRatedMoviesService;
 import br.ifsp.demo.domain.service.patch.PatchRateService;
@@ -44,27 +45,27 @@ public class RatingsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PatchMapping
+    @PatchMapping("/{movieId}")
     public ResponseEntity<PatchRateService.PatchRateServiceResponseDTO> patchRatedMovies(
+            @PathVariable UUID movieId,
             @RequestBody PatchRateService.PatchRateServiceRequestDTO patchRateRequest) {
         UUID userId = authenticationInfoService.getAuthenticatedUserId();
+
         var request = new PatchRateService.PatchRateServiceRequestDTO(
                 userId,
-                patchRateRequest.movieId(),
+                new MovieId(movieId),
                 patchRateRequest.grade()
         );
         var response = patchRateService.patchRate(request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
 
-    @DeleteMapping
-    public ResponseEntity<DeleteRateService.DeleteRateServiceResponseDTO> deleteRatedMovies(
-            @RequestBody DeleteRateService.DeleteRateServiceRequestDTO deleteRateRequest
-    ) {
+    @DeleteMapping("/{movieId}")
+    public ResponseEntity<Void> deleteRatedMovies(@PathVariable String movieId) {
         UUID userId = authenticationInfoService.getAuthenticatedUserId();
         var request = new DeleteRateService.DeleteRateServiceRequestDTO(
                 userId,
-                deleteRateRequest.movieId()
+                new MovieId(movieId)
         );
         deleteRateService.deleteRate(request);
         return ResponseEntity.noContent().build();
