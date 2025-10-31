@@ -1,23 +1,28 @@
 package br.ifsp.demo.domain.controller;
 
+import br.ifsp.demo.domain.exception.ApiExceptionHandler;
+import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.model.movie.Genre;
 import br.ifsp.demo.domain.model.movie.Movie;
 import br.ifsp.demo.domain.model.movie.MovieId;
-import br.ifsp.demo.security.auth.Role;
-import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.repository.JpaMovieRepository;
 import br.ifsp.demo.domain.repository.JpaUserRepository;
-import br.ifsp.demo.security.auth.AuthenticationInfoService;
-import br.ifsp.demo.security.config.JwtService;
 import br.ifsp.demo.domain.service.get.GetAllMoviesService;
 import br.ifsp.demo.domain.service.get.GetMovieByIdService;
+import br.ifsp.demo.security.auth.AuthenticationInfoService;
+import br.ifsp.demo.security.auth.Role;
+import br.ifsp.demo.security.auth.User;
+import br.ifsp.demo.security.config.JwtService;
+import br.ifsp.demo.security.config.SecurityConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,9 +33,11 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = MovieController.class)
+@Import({SecurityConfiguration.class, ApiExceptionHandler.class})
 public class MovieControllerTest {
 
     @Autowired
@@ -56,6 +63,9 @@ public class MovieControllerTest {
 
     @MockitoBean
     private CommandLineRunner commandLineRunner;
+
+    @MockitoBean
+    private AuthenticationProvider authenticationProvider;
 
     @Test
     @Tag("UnitTest")
@@ -132,4 +142,32 @@ public class MovieControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return 404 when movie is not found")
+    void shouldReturn404WhenMovieIsNotFound() throws Exception {
+        UUID movieId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        User user = User.builder()
+                .id(userId)
+                .name("Test")
+                .lastname("User")
+                .email("test@example.com")
+                .password("password")
+                .role(Role.USER)
+                .build();
+        String exceptionMessage = "Movie not found";
+
+        when(getMovieByIdService.getMovieById(any(GetMovieByIdService.GetMovieByIdRequestDTO.class))).thenThrow(new MovieNotFoundException(exceptionMessage));
+
+        mockMvc.perform(get("/api/v1/movies/{id}", movieId)
+                        .with(SecurityMockMvcRequestPostProcessors.user(user))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(exceptionMessage))
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"));
+    }
 }
+
