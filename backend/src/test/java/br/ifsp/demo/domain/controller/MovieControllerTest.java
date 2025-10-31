@@ -67,23 +67,25 @@ public class MovieControllerTest {
     @MockitoBean
     private AuthenticationProvider authenticationProvider;
 
-    @Test
-    @Tag("UnitTest")
-    @Tag("Structural")
-    @DisplayName("Should return 200 when getting movie by id successfully")
-    void shouldReturn200WhenGettingMovieById() throws Exception {
-        UUID userId = UUID.randomUUID();
-        MovieId movieId = new MovieId(UUID.randomUUID());
-        Movie movie = new Movie(movieId, "Test Movie", Genre.ACTION);
-
-        User mockUser = User.builder()
-                .id(userId)
+    private User createMockUser() {
+        return User.builder()
+                .id(UUID.randomUUID())
                 .name("Test")
                 .lastname("User")
                 .email("test@example.com")
                 .password("password")
                 .role(Role.USER)
                 .build();
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return 200 when getting movie by id successfully")
+    void shouldReturn200WhenGettingMovieById() throws Exception {
+        User mockUser = createMockUser();
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        Movie movie = new Movie(movieId, "Test Movie", Genre.ACTION);
 
         when(getMovieByIdService.getMovieById(any(GetMovieByIdService.GetMovieByIdRequestDTO.class)))
                 .thenReturn(new GetMovieByIdService.GetMovieByIdResponseDTO(movie));
@@ -99,20 +101,11 @@ public class MovieControllerTest {
     @Tag("Structural")
     @DisplayName("Should return 200 when getting all movies successfully")
     void shouldReturn200WhenGettingAllMovies() throws Exception {
-        UUID userId = UUID.randomUUID();
+        User mockUser = createMockUser();
         List<Movie> movies = List.of(
                 new Movie(new MovieId(UUID.randomUUID()), "Movie 1", Genre.ACTION),
                 new Movie(new MovieId(UUID.randomUUID()), "Movie 2", Genre.COMEDY)
         );
-
-        User mockUser = User.builder()
-                .id(userId)
-                .name("Test")
-                .lastname("User")
-                .email("test@example.com")
-                .password("password")
-                .role(Role.USER)
-                .build();
 
         when(getAllMoviesService.getAllMovies(any(GetAllMoviesService.GetAllMoviesRequestDTO.class)))
                 .thenReturn(new GetAllMoviesService.GetAllMoviesResponseDTO(movies));
@@ -149,21 +142,13 @@ public class MovieControllerTest {
     @DisplayName("Should return 404 when movie is not found")
     void shouldReturn404WhenMovieIsNotFound() throws Exception {
         UUID movieId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-        User user = User.builder()
-                .id(userId)
-                .name("Test")
-                .lastname("User")
-                .email("test@example.com")
-                .password("password")
-                .role(Role.USER)
-                .build();
+        User mockUser = createMockUser();
         String exceptionMessage = "Movie not found";
 
         when(getMovieByIdService.getMovieById(any(GetMovieByIdService.GetMovieByIdRequestDTO.class))).thenThrow(new MovieNotFoundException(exceptionMessage));
 
         mockMvc.perform(get("/api/v1/movies/{id}", movieId)
-                        .with(SecurityMockMvcRequestPostProcessors.user(user))
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(exceptionMessage))
