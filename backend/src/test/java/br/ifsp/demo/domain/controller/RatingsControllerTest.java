@@ -77,6 +77,17 @@ public class RatingsControllerTest {
     @MockitoBean
     private CommandLineRunner commandLineRunner;
 
+    private User createUserMock(){
+        return User.builder()
+                .id(UUID.randomUUID())
+                .name("Test")
+                .lastname("User")
+                .email("test@example.com")
+                .password("password")
+                .role(Role.USER)
+                .build();
+    }
+
     @Test
     @Tag("UnitTest")
     @Tag("TDD")
@@ -105,15 +116,7 @@ public class RatingsControllerTest {
     @Tag("Structural")
     @DisplayName("Should return 200 when getting rated movies successfully")
     void shouldReturn200WhenGettingRatedMovies() throws Exception {
-        UUID userId = UUID.randomUUID();
-        User mockUser = User.builder()
-                .id(userId)
-                .name("Test")
-                .lastname("User")
-                .email("test@example.com")
-                .password("password")
-                .role(Role.USER)
-                .build();
+        User mockUser = createUserMock();
 
         when(getRatedMoviesService.restoreRatedMovies(any(GetRatedMoviesService.RatedServiceRequestDTO.class)))
                 .thenReturn(new GetRatedMoviesService.RatedServiceResponseDTO(List.of()));
@@ -129,19 +132,11 @@ public class RatingsControllerTest {
     @Tag("Structural")
     @DisplayName("Should return 201 when posting rating successfully")
     void shouldReturn201WhenPostingRating() throws Exception {
-        UUID userId = UUID.randomUUID();
+        User mockUser = createUserMock();
+
         MovieId movieId = new MovieId(UUID.randomUUID());
         Grade grade = new Grade(5);
         Rating rating = new Rating(movieId, grade, LocalDateTime.now());
-
-        User mockUser = User.builder()
-                .id(userId)
-                .name("Test")
-                .lastname("User")
-                .email("test@example.com")
-                .password("password")
-                .role(Role.USER)
-                .build();
 
         when(postRateService.saveRate(any(PostRateService.PostRateServiceRequestDTO.class)))
                 .thenReturn(new PostRateService.PostRateServiceResponseDTO(rating));
@@ -156,7 +151,7 @@ public class RatingsControllerTest {
                           },
                           "grade": "%d"
                         }""",
-                userId,
+                mockUser.getId(),
                 movieId.unwrap(),
                 5
         );
@@ -174,21 +169,13 @@ public class RatingsControllerTest {
     @Tag("Structural")
     @DisplayName("Should return 204 when patching rating successfully")
     void shouldReturn204WhenPatchingRating() throws Exception {
-        UUID userId = UUID.randomUUID();
+        User mockUser = createUserMock();
         MovieId movieId = new MovieId(UUID.randomUUID());
         Grade grade = new Grade(4);
         Rating rating = new Rating(movieId, grade, LocalDateTime.now());
 
-        User mockUser = User.builder()
-                .id(userId)
-                .name("Test")
-                .lastname("User")
-                .email("test@example.com")
-                .password("password")
-                .role(Role.USER)
-                .build();
 
-        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(userId);
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
 
         when(patchRateService.patchRate(any(PatchRateService.PatchRateServiceRequestDTO.class)))
                 .thenReturn(new PatchRateService.PatchRateServiceResponseDTO(rating));
@@ -215,15 +202,7 @@ public class RatingsControllerTest {
     @DisplayName("Should return 204 when delete rate movie with successfully")
     void shouldReturn204WhenDeleteRatingMovie() throws Exception {
         MovieId movieId = new MovieId(UUID.randomUUID());
-        UUID userId = UUID.randomUUID();
-        User mockUser = User.builder()
-                .id(userId)
-                .name("Test")
-                .lastname("User")
-                .email("test@example.com")
-                .password("password")
-                .role(Role.USER)
-                .build();
+        User mockUser = createUserMock();
 
         mockMvc.perform(delete("/api/v1/ratings/{movieId}", movieId.unwrap())
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
@@ -237,19 +216,11 @@ public class RatingsControllerTest {
     @DisplayName("Should return 404 when delete rate movie is not found")
     void shouldReturn404WhenDeleteRatingMovieNotFound() throws Exception {
         MovieId movieId = new MovieId(UUID.randomUUID());
-        UUID userId = UUID.randomUUID();
-        User mockUser = User.builder()
-                .id(userId)
-                .name("Test")
-                .lastname("User")
-                .email("test@example.com")
-                .password("password")
-                .role(Role.USER)
-                .build();
+        User mockUser = createUserMock();
 
         String exceptionMessage = "Movie not found";
 
-        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(userId);
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
 
         doThrow(new MovieNotFoundException(exceptionMessage))
                 .when(deleteRateService)
@@ -269,18 +240,10 @@ public class RatingsControllerTest {
     @Tag("Structural")
     @DisplayName("Should return 403 when operation is forbidden")
     void shouldReturn403WhenOperationIsForbidden() throws Exception {
-        UUID userId = UUID.randomUUID();
-        User mockUser = User.builder()
-                .id(userId)
-                .name("Test")
-                .lastname("User")
-                .email("test@example.com")
-                .password("password")
-                .role(Role.USER)
-                .build();
+        User mockUser = createUserMock();
         String exceptionMessage = "Ilegal State";
 
-        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(userId);
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
 
         when(getRatedMoviesService.restoreRatedMovies(any(GetRatedMoviesService.RatedServiceRequestDTO.class)))
                 .thenThrow(new IllegalStateException(exceptionMessage));
