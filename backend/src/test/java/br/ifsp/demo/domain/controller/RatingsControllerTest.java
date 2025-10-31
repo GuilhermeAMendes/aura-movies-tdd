@@ -3,6 +3,7 @@ package br.ifsp.demo.domain.controller;
 import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.MovieId;
 import br.ifsp.demo.domain.model.rating.Rating;
+import br.ifsp.demo.domain.service.delete.DeleteRateService;
 import br.ifsp.demo.security.auth.Role;
 import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.repository.JpaMovieRepository;
@@ -49,6 +50,9 @@ public class RatingsControllerTest {
 
     @MockitoBean
     private PatchRateService patchRateService;
+
+    @MockitoBean
+    private DeleteRateService deleteRateService;
 
     @MockitoBean
     private JwtService jwtService;
