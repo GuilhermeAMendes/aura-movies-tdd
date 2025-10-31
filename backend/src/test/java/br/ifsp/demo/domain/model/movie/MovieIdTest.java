@@ -21,6 +21,8 @@ public class MovieIdTest {
 
         assertThat(movieId1.equals(movieId2)).isTrue();
         assertThat(movieId1.equals(movieId3)).isFalse();
+        assertThat(movieId1.equals(null)).isFalse();
+        assertThat(movieId1.equals(new Object())).isFalse();
         assertThat(movieId1.hashCode()).isEqualTo(movieId2.hashCode());
         assertThat(movieId1.hashCode()).isNotEqualTo(movieId3.hashCode());
     }
