@@ -5,16 +5,14 @@ import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.exception.UserNotFoundException;
 import br.ifsp.demo.domain.repository.JpaMovieRepository;
 import br.ifsp.demo.domain.repository.JpaUserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class DeleteRateServiceImpl implements DeleteRateService {
     private final JpaUserRepository userRepository;
     private final JpaMovieRepository movieRepository;
-
-    public DeleteRateServiceImpl(JpaUserRepository userRepository, JpaMovieRepository movieRepository) {
-        this.userRepository = userRepository;
-        this.movieRepository = movieRepository;
-    }
-
 
     @Override
     public void deleteRate(DeleteRateServiceRequestDTO request) {
