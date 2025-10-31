@@ -1,25 +1,29 @@
 package br.ifsp.demo.domain.controller;
 
+import br.ifsp.demo.domain.exception.ApiExceptionHandler;
 import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.MovieId;
 import br.ifsp.demo.domain.model.rating.Rating;
-import br.ifsp.demo.domain.service.delete.DeleteRateService;
-import br.ifsp.demo.security.auth.Role;
-import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.repository.JpaMovieRepository;
 import br.ifsp.demo.domain.repository.JpaUserRepository;
-import br.ifsp.demo.security.auth.AuthenticationInfoService;
-import br.ifsp.demo.security.config.JwtService;
+import br.ifsp.demo.domain.service.delete.DeleteRateService;
 import br.ifsp.demo.domain.service.get.GetRatedMoviesService;
 import br.ifsp.demo.domain.service.patch.PatchRateService;
 import br.ifsp.demo.domain.service.post.PostRateService;
+import br.ifsp.demo.security.auth.AuthenticationInfoService;
+import br.ifsp.demo.security.auth.Role;
+import br.ifsp.demo.security.auth.User;
+import br.ifsp.demo.security.config.JwtService;
+import br.ifsp.demo.security.config.SecurityConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,10 +38,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = RatingsController.class)
+@Import({SecurityConfiguration.class, ApiExceptionHandler.class})
 public class RatingsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private AuthenticationProvider authenticationProvider;
 
     @MockitoBean
     private AuthenticationInfoService authenticationInfoService;
@@ -138,13 +146,13 @@ public class RatingsControllerTest {
         // Create JSON manually with grade as string because @JsonCreator expects String
         String jsonContent = String.format(
                 """
-                {
-                  "userId": "%s",
-                  "movieId": {
-                    "id": "%s"
-                  },
-                  "grade": "%d"
-                }""",
+                        {
+                          "userId": "%s",
+                          "movieId": {
+                            "id": "%s"
+                          },
+                          "grade": "%d"
+                        }""",
                 userId,
                 movieId.unwrap(),
                 5
@@ -177,25 +185,21 @@ public class RatingsControllerTest {
                 .role(Role.USER)
                 .build();
 
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(userId);
+
         when(patchRateService.patchRate(any(PatchRateService.PatchRateServiceRequestDTO.class)))
                 .thenReturn(new PatchRateService.PatchRateServiceResponseDTO(rating));
 
         // Create JSON manually with grade as string because @JsonCreator expects String
         String jsonContent = String.format(
                 """
-                {
-                  "userId": "%s",
-                  "movieId": {
-                    "id": "%s"
-                  },
-                  "grade": "%d"
-                }""",
-                userId,
-                movieId.unwrap(),
-                4
+                        {
+                          "grade": "%d"
+                        }""",
+                grade.value()
         );
 
-        mockMvc.perform(patch("/api/v1/ratings")
+        mockMvc.perform(patch("/api/v1/ratings/{movieId}", movieId.unwrap())
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_JSON)
