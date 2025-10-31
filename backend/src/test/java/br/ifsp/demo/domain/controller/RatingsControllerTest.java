@@ -263,4 +263,31 @@ public class RatingsControllerTest {
                 .andExpect(jsonPath("$.message").value(exceptionMessage))
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"));
     }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return 403 when operation is forbidden")
+    void shouldReturn403WhenOperationIsForbidden() throws Exception {
+        UUID userId = UUID.randomUUID();
+        User mockUser = User.builder()
+                .id(userId)
+                .name("Test")
+                .lastname("User")
+                .email("test@example.com")
+                .password("password")
+                .role(Role.USER)
+                .build();
+        String exceptionMessage = "Ilegal State";
+
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(userId);
+
+        when(getRatedMoviesService.restoreRatedMovies(any(GetRatedMoviesService.RatedServiceRequestDTO.class)))
+                .thenThrow(new IllegalStateException(exceptionMessage));
+
+        mockMvc.perform(get("/api/v1/ratings")
+        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
 }
