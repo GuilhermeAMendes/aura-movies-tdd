@@ -27,3 +27,7 @@ export interface GetMovieByIdPayload {
 export interface GetMovieByIdResponse {
   movie: Movie;
 }
+
+export interface GetMoviesResponse {
+  movies: Movie[];
+}
