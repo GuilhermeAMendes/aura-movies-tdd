@@ -17,7 +17,7 @@ import { useNavigationHandler } from "@/shared/hooks/navigation/useNavigation";
 import { useAuthStore } from "@/modules/auth/store/authStore";
 
 export function LogoutButton() {
-  const { logout } = useAuthStore();
+  const { logout, token } = useAuthStore();
 
   const { navigateTo } = useNavigationHandler();
 
@@ -26,7 +26,7 @@ export function LogoutButton() {
     navigateTo("/");
   };
 
-  return (
+  return token ? (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
@@ -40,5 +40,5 @@ export function LogoutButton() {
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  );
+  ) : null;
 }

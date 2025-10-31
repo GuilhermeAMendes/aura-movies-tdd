@@ -9,14 +9,11 @@ import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/modules/auth/components/buttons/LogoutButton";
 
 // Hooks
-import { useAuthStore } from "@/modules/auth/store/authStore";
 import { useNavigationHandler } from "@/shared/hooks/navigation/useNavigation";
 
 export function Header() {
   const pathname = usePathname();
   const { navigateTo } = useNavigationHandler();
-
-  const { token } = useAuthStore();
 
   const isHomePage = pathname === "/";
   const isAuthPage = pathname === "/login";
@@ -38,9 +35,7 @@ export function Header() {
           </span>
         </Link>
         <nav>
-          {token ? (
-            <LogoutButton />
-          ) : isHomePage ? (
+          {isHomePage ? (
             <Button
               onClick={handleLoginClick}
               variant="ghost"
@@ -49,6 +44,7 @@ export function Header() {
               Login
             </Button>
           ) : null}
+          {isHomePage || isAuthPage ? null : <LogoutButton />}
         </nav>
       </div>
     </header>

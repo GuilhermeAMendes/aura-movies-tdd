@@ -77,6 +77,7 @@ export const useAuthStore = create<AuthState>()(
 
     logout: () => {
       authStorage.clear();
+      set({ token: null });
     },
 
     restoredSession: () => {
