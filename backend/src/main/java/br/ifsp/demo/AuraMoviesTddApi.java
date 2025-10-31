@@ -4,10 +4,10 @@ import br.ifsp.demo.domain.model.movie.Genre;
 import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.Movie;
 import br.ifsp.demo.domain.model.movie.MovieId;
-import br.ifsp.demo.security.auth.Role;
-import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.repository.JpaMovieRepository;
 import br.ifsp.demo.domain.repository.JpaUserRepository;
+import br.ifsp.demo.security.auth.Role;
+import br.ifsp.demo.security.auth.User;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,9 +26,9 @@ public class AuraMoviesTddApi {
     }
 
     @Bean
-    public CommandLineRunner initData(JpaMovieRepository movieRepository, 
-                                     JpaUserRepository userRepository,
-                                     PasswordEncoder passwordEncoder) {
+    public CommandLineRunner initData(JpaMovieRepository movieRepository,
+                                      JpaUserRepository userRepository,
+                                      PasswordEncoder passwordEncoder) {
         return args -> {
             // Only initialize if database is empty
             if (movieRepository.count() == 0 && userRepository.count() == 0) {
@@ -37,69 +37,91 @@ public class AuraMoviesTddApi {
         };
     }
 
-    private void initializeMockData(JpaMovieRepository movieRepository, 
-                                   JpaUserRepository userRepository,
-                                   PasswordEncoder passwordEncoder) {
-        
+    private void initializeMockData(JpaMovieRepository movieRepository,
+                                    JpaUserRepository userRepository,
+                                    PasswordEncoder passwordEncoder) {
+
         // Create sample movies
         List<Movie> movies = createSampleMovies();
         movieRepository.saveAll(movies);
-        
+
         // Create sample users
         List<User> users = createSampleUsers(passwordEncoder);
         userRepository.saveAll(users);
-        
+
         // Add ratings to users
         addRatingsToUsers(users, movies, userRepository);
-        
+
         System.out.println("Mock data initialized successfully!");
         System.out.println("Created " + movies.size() + " movies and " + users.size() + " users with ratings.");
     }
 
     private List<Movie> createSampleMovies() {
         List<Movie> movies = new ArrayList<>();
-        
+
         // Action movies
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Dark Knight", Genre.ACTION));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Mad Max: Fury Road", Genre.ACTION));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "John Wick", Genre.ACTION));
-        
+
         // Comedy movies
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Superbad", Genre.COMEDY));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Hangover", Genre.COMEDY));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Deadpool", Genre.COMEDY));
-        
+
         // Drama movies
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Shawshank Redemption", Genre.DRAMA));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Forrest Gump", Genre.DRAMA));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Godfather", Genre.DRAMA));
-        
+
         // Sci-Fi movies
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Blade Runner 2049", Genre.SCI_FI));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Interstellar", Genre.SCI_FI));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Matrix", Genre.SCI_FI));
-        
+
         // Horror movies
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Conjuring", Genre.HORROR));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Hereditary", Genre.HORROR));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Get Out", Genre.HORROR));
-        
+
         // Romance movies
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Notebook", Genre.ROMANCE));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Casablanca", Genre.ROMANCE));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "La La Land", Genre.ROMANCE));
-        
+
         // Thriller movies
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Gone Girl", Genre.THRILLER));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Prisoners", Genre.THRILLER));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Se7en", Genre.THRILLER));
-        
+
+        // Adventure movies
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Indiana Jones and the Last Crusade", Genre.ADVENTURE));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Pirates of the Caribbean: The Curse of the Black Pearl", Genre.ADVENTURE));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Revenant", Genre.ADVENTURE));
+
+        // Fantasy movies
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Lord of the Rings: The Fellowship of the Ring", Genre.FANTASY));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Harry Potter and the Prisoner of Azkaban", Genre.FANTASY));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Pan's Labyrinth", Genre.FANTASY));
+
+        // Documentary movies
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Free Solo", Genre.DOCUMENTARY));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Social Dilemma", Genre.DOCUMENTARY));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Won’t You Be My Neighbor?", Genre.DOCUMENTARY));
+
+        // Extra picks for depth
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Parasite", Genre.THRILLER));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Whiplash", Genre.DRAMA));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Everything Everywhere All at Once", Genre.SCI_FI));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Grand Budapest Hotel", Genre.COMEDY));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "Eternal Sunshine of the Spotless Mind", Genre.ROMANCE));
+
         return movies;
     }
 
     private List<User> createSampleUsers(PasswordEncoder passwordEncoder) {
         List<User> users = new ArrayList<>();
-        
+
         // Admin user
         User admin = User.builder()
                 .id(UUID.randomUUID())
@@ -111,7 +133,7 @@ public class AuraMoviesTddApi {
                 .ratings(new ArrayList<>())
                 .build();
         users.add(admin);
-        
+
         // Regular users
         User lucas = User.builder()
                 .id(UUID.randomUUID())
@@ -134,7 +156,7 @@ public class AuraMoviesTddApi {
                 .ratings(new ArrayList<>())
                 .build();
         users.add(jane);
-        
+
         User mike = User.builder()
                 .id(UUID.randomUUID())
                 .name("Mike")
@@ -145,7 +167,7 @@ public class AuraMoviesTddApi {
                 .ratings(new ArrayList<>())
                 .build();
         users.add(mike);
-        
+
         User sarah = User.builder()
                 .id(UUID.randomUUID())
                 .name("Sarah")
@@ -184,7 +206,7 @@ public class AuraMoviesTddApi {
         john.addRating(movies.get(12).getMovieId(), new Grade(2)); // The Conjuring (doesn't like horror)
         john.addRating(movies.get(15).getMovieId(), new Grade(3)); // The Notebook
         john.addRating(movies.get(18).getMovieId(), new Grade(4)); // Gone Girl
-        
+
         // Jane's ratings (likes drama and romance)
         User jane = users.get(2);
         jane.addRating(movies.get(6).getMovieId(), new Grade(5)); // The Shawshank Redemption
@@ -196,7 +218,7 @@ public class AuraMoviesTddApi {
         jane.addRating(movies.get(3).getMovieId(), new Grade(3)); // Superbad
         jane.addRating(movies.get(0).getMovieId(), new Grade(3)); // The Dark Knight
         jane.addRating(movies.get(9).getMovieId(), new Grade(2)); // Blade Runner 2049
-        
+
         // Mike's ratings (likes sci-fi and thriller)
         User mike = users.get(3);
         mike.addRating(movies.get(9).getMovieId(), new Grade(5)); // Blade Runner 2049
@@ -208,7 +230,7 @@ public class AuraMoviesTddApi {
         mike.addRating(movies.get(0).getMovieId(), new Grade(4)); // The Dark Knight
         mike.addRating(movies.get(1).getMovieId(), new Grade(3)); // Mad Max: Fury Road
         mike.addRating(movies.get(6).getMovieId(), new Grade(3)); // The Shawshank Redemption
-        
+
         // Sarah's ratings (mixed preferences)
         User sarah = users.get(4);
         sarah.addRating(movies.get(0).getMovieId(), new Grade(4)); // The Dark Knight
@@ -220,7 +242,7 @@ public class AuraMoviesTddApi {
         sarah.addRating(movies.get(18).getMovieId(), new Grade(3)); // Gone Girl
         sarah.addRating(movies.get(2).getMovieId(), new Grade(3)); // John Wick
         sarah.addRating(movies.get(5).getMovieId(), new Grade(4)); // Deadpool
-        
+
         // Save all users with their ratings
         userRepository.saveAll(users);
     }
