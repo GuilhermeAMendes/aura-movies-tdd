@@ -190,7 +190,6 @@ public class RatingsControllerTest {
         when(patchRateService.patchRate(any(PatchRateService.PatchRateServiceRequestDTO.class)))
                 .thenReturn(new PatchRateService.PatchRateServiceResponseDTO(rating));
 
-        // Create JSON manually with grade as string because @JsonCreator expects String
         String jsonContent = String.format(
                 """
                         {
@@ -204,6 +203,28 @@ public class RatingsControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return 204 when delete rate movie with successfully")
+    void shouldReturn204WhenDeleteRatingMovie() throws Exception {
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        UUID userId = UUID.randomUUID();
+        User mockUser = User.builder()
+                .id(userId)
+                .name("Test")
+                .lastname("User")
+                .email("test@example.com")
+                .password("password")
+                .role(Role.USER)
+                .build();
+
+        mockMvc.perform(delete("/api/v1/ratings/{movieId}", movieId.unwrap())
+                .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(status().isNoContent());
     }
 }
