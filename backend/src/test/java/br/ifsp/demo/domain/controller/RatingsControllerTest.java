@@ -77,7 +77,7 @@ public class RatingsControllerTest {
     @MockitoBean
     private CommandLineRunner commandLineRunner;
 
-    private User createUserMock(){
+    private User createUserMock() {
         return User.builder()
                 .id(UUID.randomUUID())
                 .name("Test")
@@ -213,6 +213,61 @@ public class RatingsControllerTest {
     @Test
     @Tag("UnitTest")
     @Tag("Structural")
+    @DisplayName("Should return 400 when sending invalid argument")
+    void shouldReturn400WhenInvalidArgument() throws Exception {
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        User mockUser = createUserMock();
+        String exceptionMessage = "Illegal argument";
+
+        String jsonContent = String.format(
+                """
+                        {
+                          "movieId": {
+                            "id": "%s"
+                          },
+                          "grade": "%d"
+                        }""",
+                movieId.unwrap(),
+                5
+        );
+
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
+
+        when(postRateService.saveRate(any(PostRateService.PostRateServiceRequestDTO.class)))
+                .thenThrow(new IllegalArgumentException(exceptionMessage));
+
+        mockMvc.perform(post("/api/v1/ratings")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(exceptionMessage))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"));
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return 403 when operation is forbidden")
+    void shouldReturn403WhenOperationIsForbidden() throws Exception {
+        User mockUser = createUserMock();
+        String exceptionMessage = "Illegal State";
+
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
+
+        when(getRatedMoviesService.restoreRatedMovies(any(GetRatedMoviesService.RatedServiceRequestDTO.class)))
+                .thenThrow(new IllegalStateException(exceptionMessage));
+
+        mockMvc.perform(get("/api/v1/ratings")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
     @DisplayName("Should return 404 when delete rate movie is not found")
     void shouldReturn404WhenDeleteRatingMovieNotFound() throws Exception {
         MovieId movieId = new MovieId(UUID.randomUUID());
@@ -235,22 +290,4 @@ public class RatingsControllerTest {
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"));
     }
 
-    @Test
-    @Tag("UnitTest")
-    @Tag("Structural")
-    @DisplayName("Should return 403 when operation is forbidden")
-    void shouldReturn403WhenOperationIsForbidden() throws Exception {
-        User mockUser = createUserMock();
-        String exceptionMessage = "Ilegal State";
-
-        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
-
-        when(getRatedMoviesService.restoreRatedMovies(any(GetRatedMoviesService.RatedServiceRequestDTO.class)))
-                .thenThrow(new IllegalStateException(exceptionMessage));
-
-        mockMvc.perform(get("/api/v1/ratings")
-        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
-    }
 }
