@@ -6,11 +6,11 @@ import { usePathname } from "next/navigation";
 
 // Components
 import { Button } from "@/components/ui/button";
+import { AccessButton } from "@/modules/auth/components/buttons/AccessButton";
 import { LogoutButton } from "@/modules/auth/components/buttons/LogoutButton";
 
 // Hooks
 import { useNavigationHandler } from "@/shared/hooks/navigation/useNavigation";
-import { AccessButton } from "@/modules/auth/components/buttons/AccessButton";
 import { useAuthStore } from "@/modules/auth/store/authStore";
 
 export function Header() {
