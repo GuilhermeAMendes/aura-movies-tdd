@@ -21,3 +21,7 @@ export interface PatchRatingPayload {
   movieId: string;
   grade: string;
 }
+
+export interface DeleteRatePayload {
+  movieId: string;
+}
