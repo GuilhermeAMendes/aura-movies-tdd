@@ -1,6 +1,6 @@
 package br.ifsp.demo.domain.controller;
 
-import br.ifsp.demo.domain.exception.ApiExceptionHandler;
+import br.ifsp.demo.security.config.ApiExceptionHandler;
 import br.ifsp.demo.domain.exception.EntityAlreadyExistsException;
 import br.ifsp.demo.domain.repository.JpaUserRepository;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;

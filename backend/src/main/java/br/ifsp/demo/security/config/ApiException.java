@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.exception;
+package br.ifsp.demo.security.config;
 
 import lombok.Builder;
 import lombok.Getter;

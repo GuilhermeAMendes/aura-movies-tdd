@@ -1,5 +1,8 @@
-package br.ifsp.demo.domain.exception;
+package br.ifsp.demo.security.config;
 
+import br.ifsp.demo.domain.exception.EntityAlreadyExistsException;
+import br.ifsp.demo.domain.exception.MovieNotFoundException;
+import br.ifsp.demo.domain.exception.UserNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
