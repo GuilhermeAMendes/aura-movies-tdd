@@ -166,6 +166,33 @@ public class RatingsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
                 .andExpect(status().isCreated());
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return 400 when posting rating with non-numeric grade")
+    void shouldReturn400WhenPostingNonNumericGrade() throws Exception {
+        User mockUser = createUserMock();
+        MovieId movieId = new MovieId(UUID.randomUUID());
+
+        String jsonContent = String.format(
+                """
+                        {
+                          "userId": "%s",
+                          "movieId": {
+                            "id": "%s"
+                          },
+                          "grade": "abc"
+                        }""",
+                mockUser.getId(),
+                movieId.unwrap()
+        );
+
+        mockMvc.perform(post("/api/v1/ratings")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
