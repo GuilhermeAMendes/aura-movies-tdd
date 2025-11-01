@@ -165,7 +165,17 @@ public class RatingsControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.rating.grade").value(5));
+
+        ArgumentCaptor<PostRateService.PostRateServiceRequestDTO> captor =
+                ArgumentCaptor.forClass(PostRateService.PostRateServiceRequestDTO.class);
+
+        verify(postRateService).saveRate(captor.capture());
+
+        assertNotNull(captor.getValue().grade(), "Grade object in DTO was null");
+    }
+
     @Test
     @Tag("UnitTest")
     @Tag("Structural")
@@ -225,6 +235,13 @@ public class RatingsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
                 .andExpect(status().isNoContent());
+
+        ArgumentCaptor<PatchRateService.PatchRateServiceRequestDTO> captor =
+                ArgumentCaptor.forClass(PatchRateService.PatchRateServiceRequestDTO.class);
+
+        verify(patchRateService).patchRate(captor.capture());
+
+        assertNotNull(captor.getValue().grade(), "Grade object in DTO was null");
     }
 
     @Test
