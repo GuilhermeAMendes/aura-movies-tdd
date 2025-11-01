@@ -30,7 +30,6 @@ public class AuraMoviesTddApi {
                                       JpaUserRepository userRepository,
                                       PasswordEncoder passwordEncoder) {
         return args -> {
-            // Only initialize if database is empty
             if (movieRepository.count() == 0 && userRepository.count() == 0) {
                 initializeMockData(movieRepository, userRepository, passwordEncoder);
             }
@@ -63,11 +62,13 @@ public class AuraMoviesTddApi {
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Dark Knight", Genre.ACTION));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Mad Max: Fury Road", Genre.ACTION));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "John Wick", Genre.ACTION));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "FILME DE AÇÃO MUITO FODA", Genre.ACTION));
 
         // Comedy movies
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Superbad", Genre.COMEDY));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Hangover", Genre.COMEDY));
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "Deadpool", Genre.COMEDY));
+        movies.add(new Movie(new MovieId(UUID.randomUUID()), "FILME DE COMÉDIA MUITO FODA", Genre.COMEDY));
 
         // Drama movies
         movies.add(new Movie(new MovieId(UUID.randomUUID()), "The Shawshank Redemption", Genre.DRAMA));
