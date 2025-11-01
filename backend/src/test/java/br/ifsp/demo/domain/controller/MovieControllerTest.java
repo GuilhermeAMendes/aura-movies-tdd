@@ -93,7 +93,10 @@ public class MovieControllerTest {
         mockMvc.perform(get("/api/v1/movies/{id}", movieId.unwrap())
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.movie.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.movie.genre").value(movie.getGenre().toString()))
+                .andExpect(jsonPath("$.movie.movieId.id").value(movieId.unwrap().toString()));
     }
 
     @Test
