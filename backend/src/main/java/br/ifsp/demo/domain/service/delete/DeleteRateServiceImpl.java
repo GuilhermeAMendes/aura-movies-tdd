@@ -26,7 +26,5 @@ public class DeleteRateServiceImpl implements DeleteRateService {
         user.deleteRating(request.movieId());
 
         userRepository.save(user);
-
-        new DeleteRateServiceResponseDTO();
     }
 }

@@ -10,6 +10,4 @@ public interface DeleteRateService {
             UUID userId,
             MovieId movieId
     ) {}
-
-    record DeleteRateServiceResponseDTO() {}
 }
