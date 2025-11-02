@@ -1,6 +1,8 @@
 package br.ifsp.demo.domain.service.get;
 
 import br.ifsp.demo.domain.model.movie.Movie;
+import br.ifsp.demo.domain.model.movie.MovieId;
+import br.ifsp.demo.domain.model.rating.Rating;
 import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.exception.UserNotFoundException;
@@ -23,13 +25,17 @@ public class GetMovieByIdServiceImpl implements GetMovieByIdService {
     @Transactional(readOnly = true)
     public GetMovieByIdResponseDTO getMovieById(GetMovieByIdRequestDTO request) {
 
-        Optional<User> user = userRepository.findById(request.userId());
-
-        if (user.isEmpty()) throw new UserNotFoundException("User not found!");
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         Movie movie = movieRepository.findById(request.movieId())
                 .orElseThrow(() -> new MovieNotFoundException("Movie not found"));
 
-        return new GetMovieByIdResponseDTO(movie);
+        Rating userRating = user.getRatings().stream()
+                    .filter(rating -> rating.getMovieId().equals(request.movieId()))
+                    .findFirst()
+                    .orElse(null);
+
+        return new GetMovieByIdResponseDTO(movie, userRating);
     }
 }

@@ -2,6 +2,7 @@ package br.ifsp.demo.domain.service.get;
 
 import br.ifsp.demo.domain.model.movie.Movie;
 import br.ifsp.demo.domain.model.movie.MovieId;
+import br.ifsp.demo.domain.model.rating.Rating;
 
 import java.util.UUID;
 
@@ -16,7 +17,8 @@ public interface GetMovieByIdService {
     }
 
     record GetMovieByIdResponseDTO(
-            Movie movie
+            Movie movie,
+            Rating rating
     ) {
     }
 }
