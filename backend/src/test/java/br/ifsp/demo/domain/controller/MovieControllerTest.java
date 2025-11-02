@@ -1,6 +1,5 @@
 package br.ifsp.demo.domain.controller;
 
-import br.ifsp.demo.security.config.ApiExceptionHandler;
 import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.model.movie.Genre;
 import br.ifsp.demo.domain.model.movie.Movie;
@@ -12,6 +11,7 @@ import br.ifsp.demo.domain.service.get.GetMovieByIdService;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import br.ifsp.demo.security.auth.Role;
 import br.ifsp.demo.security.auth.User;
+import br.ifsp.demo.security.config.ApiExceptionHandler;
 import br.ifsp.demo.security.config.JwtService;
 import br.ifsp.demo.security.config.SecurityConfiguration;
 import org.junit.jupiter.api.DisplayName;
@@ -81,6 +81,7 @@ public class MovieControllerTest {
     @Test
     @Tag("UnitTest")
     @Tag("Structural")
+    @Tag("Mutation")
     @DisplayName("Should return 200 when getting movie by id successfully")
     void shouldReturn200WhenGettingMovieById() throws Exception {
         User mockUser = createMockUser();
@@ -103,6 +104,7 @@ public class MovieControllerTest {
     @Test
     @Tag("UnitTest")
     @Tag("Structural")
+    @Tag("Mutation")
     @DisplayName("Should return 200 when getting all movies successfully")
     void shouldReturn200WhenGettingAllMovies() throws Exception {
         User mockUser = createMockUser();
