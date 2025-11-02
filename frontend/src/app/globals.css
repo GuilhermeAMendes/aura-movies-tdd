@@ -78,6 +78,21 @@
   --sidebar-ring: oklch(0.705 0.015 286.067);
 }
 
+/* Make room for header (h-16) and footer (assumed h-16) so pages that use
+   "min-h-screen" don't push the footer off-screen. Adjust heights if your
+   header/footer sizes change. */
+:root {
+  --header-height: 4rem; /* header h-16 */
+  --footer-height: 4rem; /* footer h-16 */
+}
+
+/* Override Tailwind's min-h-screen behaviour so it respects header+footer
+   space across all pages. This rule is intentionally placed after the
+   Tailwind imports so it takes precedence. */
+.min-h-screen {
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
 .dark {
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
