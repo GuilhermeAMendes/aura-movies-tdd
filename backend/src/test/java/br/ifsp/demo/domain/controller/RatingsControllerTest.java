@@ -129,7 +129,7 @@ public class RatingsControllerTest {
         mockMvc.perform(get("/api/v1/ratings")
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(jsonPath("$").exists());
+                .andExpect(status().isOk()).andExpect(jsonPath("$.ratedMovies").exists());
     }
 
     @Test

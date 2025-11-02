@@ -7,6 +7,7 @@ import br.ifsp.demo.domain.model.movie.MovieId;
 import br.ifsp.demo.domain.model.rating.Rating;
 import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.exception.UserNotFoundException;
+import br.ifsp.demo.domain.repository.JpaMovieRepository;
 import br.ifsp.demo.domain.repository.JpaUserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -27,7 +28,10 @@ import static org.mockito.Mockito.*;
 public class GetRatedMoviesServiceImplTest {
 
     @Mock
-    private  JpaUserRepository jpaUserRepository;
+    private JpaUserRepository jpaUserRepository;
+
+    @Mock
+    private JpaMovieRepository jpaMovieRepository;
 
     @InjectMocks
     private GetRatedMoviesServiceImpl sut;
@@ -52,9 +56,10 @@ public class GetRatedMoviesServiceImplTest {
         Random grader = new Random();
         List<Movie> movies = createMockListAvailableMovies();
         List<Rating> userRatings = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
         movies.forEach(movie -> {
             int randomGrade = grader.nextInt(5) + 1;
-            userRatings.add(new Rating(movie.getMovieId(), new Grade(randomGrade), LocalDateTime.now()));
+            userRatings.add(new Rating(movie.getMovieId(), new Grade(randomGrade), now));
         });
         User user = User.builder().id(userId)
                 .name("Lucas")
@@ -65,15 +70,33 @@ public class GetRatedMoviesServiceImplTest {
 
         // When
         when(jpaUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
+        movies.forEach(movie -> {
+            when(jpaMovieRepository.findById(movie.getMovieId())).thenReturn(Optional.of(movie));
+        });
         GetRatedMoviesService.RatedServiceRequestDTO requestDTO = new GetRatedMoviesService.RatedServiceRequestDTO(userId);
         GetRatedMoviesService.RatedServiceResponseDTO responseDTO = sut.restoreRatedMovies(requestDTO);
 
-        List<Rating> result = responseDTO.ratings();
+        List<GetRatedMoviesService.RatedMovieDTO> result = responseDTO.ratedMovies();
 
         // Then
         assertThat(result).isNotNull().isNotEmpty().hasSize(movies.size());
-        assertThat(result).containsExactlyInAnyOrderElementsOf(userRatings);
+        for (Movie movie : movies) {
+            Rating rating = userRatings.stream()
+                    .filter(r -> r.getMovieId().equals(movie.getMovieId()))
+                    .findFirst()
+                    .orElseThrow();
+            GetRatedMoviesService.RatedMovieDTO ratedMovieDTO = result.stream()
+                    .filter(rm -> rm.movieId().equals(movie.getMovieId()))
+                    .findFirst()
+                    .orElseThrow();
+            assertThat(ratedMovieDTO.movieId()).isEqualTo(movie.getMovieId());
+            assertThat(ratedMovieDTO.title()).isEqualTo(movie.getTitle());
+            assertThat(ratedMovieDTO.genre()).isEqualTo(movie.getGenre());
+            assertThat(ratedMovieDTO.grade()).isEqualTo(rating.getGrade());
+            assertThat(ratedMovieDTO.lastGradedAt()).isEqualTo(rating.getLastGradedAt());
+        }
         verify(jpaUserRepository, times(1)).findUserById(userId);
+        movies.forEach(movie -> verify(jpaMovieRepository, times(1)).findById(movie.getMovieId()));
     }
 
 
@@ -95,11 +118,12 @@ public class GetRatedMoviesServiceImplTest {
         when(jpaUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
         GetRatedMoviesService.RatedServiceRequestDTO requestDTO = new GetRatedMoviesService.RatedServiceRequestDTO(userId);
         GetRatedMoviesService.RatedServiceResponseDTO responseDTO = sut.restoreRatedMovies(requestDTO);
-        List<Rating> result = responseDTO.ratings();
+        List<GetRatedMoviesService.RatedMovieDTO> result = responseDTO.ratedMovies();
 
         // Then
         assertThat(result).isNotNull().isEmpty();
         verify(jpaUserRepository, times(1)).findUserById(userId);
+        verifyNoInteractions(jpaMovieRepository);
     }
 
     @Test
