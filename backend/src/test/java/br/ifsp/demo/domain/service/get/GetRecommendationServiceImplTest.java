@@ -102,6 +102,8 @@ public class GetRecommendationServiceImplTest {
         assertThat(result).isNotNull().isNotEmpty();
         assertThat(countOfPreferredGenre).isGreaterThanOrEqualTo(result.size() / 2);
         assertThat(result).contains(expectedMovie);
+        assertThat(result).doesNotContain(ratedMovie);
+
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findAll();
     }
