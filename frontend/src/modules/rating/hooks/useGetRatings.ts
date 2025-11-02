@@ -47,7 +47,7 @@ export function useGetRatings(): UseGetRatingsResponse {
       return;
     }
 
-    setRatings(result.value.ratings);
+    setRatings(result.value.ratedMovies);
     setIsLoading(false);
   };
 

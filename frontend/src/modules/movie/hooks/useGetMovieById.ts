@@ -18,6 +18,7 @@ import { isLeft } from "@/shared/patterns/either";
 
 // Types
 import type { Movie } from "@/modules/movie/types";
+import { Rating } from "@/modules/rating/types";
 
 interface UseGetMovieByIdPayload {
   id: string;
@@ -25,6 +26,7 @@ interface UseGetMovieByIdPayload {
 
 interface UseGetMovieByIdResponse {
   movie: Movie | null;
+  rating: Rating | null;
   isLoading: boolean;
   error: ApplicationError | null;
 }
@@ -33,6 +35,7 @@ export function useGetMovieById({
   id,
 }: UseGetMovieByIdPayload): UseGetMovieByIdResponse {
   const [movie, setMovie] = useState<Movie | null>(null);
+  const [rating, setRating] = useState<Rating | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<ApplicationError | null>(null);
 
@@ -53,7 +56,9 @@ export function useGetMovieById({
       return;
     }
 
-    setMovie(result.value.movie);
+    const { movie, rating } = result.value;
+    setMovie(movie);
+    setRating(rating);
     setIsLoading(false);
   };
 
@@ -68,5 +73,5 @@ export function useGetMovieById({
     loadMovie();
   }, [token, isSessionRestored, id]);
 
-  return { movie, isLoading, error };
+  return { movie, rating, isLoading, error };
 }
