@@ -203,7 +203,7 @@ public class GetRecommendationServiceImplTest {
 
         List<Movie> result = sut.recommendMovies(new GetRecommendationService.RecommendationServiceRequestDTO(userId)).recommendations();
 
-        assertThat(result).isNotNull();
+        assertThat(result).isEmpty();
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findAll();
     }
