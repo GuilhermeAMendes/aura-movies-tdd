@@ -16,6 +16,8 @@ import br.ifsp.demo.security.auth.Role;
 import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.security.config.JwtService;
 import br.ifsp.demo.security.config.SecurityConfiguration;
+import org.mockito.ArgumentCaptor;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,6 +40,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -126,7 +129,7 @@ public class RatingsControllerTest {
         mockMvc.perform(get("/api/v1/ratings")
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()).andExpect(jsonPath("$").exists());
     }
 
     @Test
@@ -143,7 +146,6 @@ public class RatingsControllerTest {
         when(postRateService.saveRate(any(PostRateService.PostRateServiceRequestDTO.class)))
                 .thenReturn(new PostRateService.PostRateServiceResponseDTO(rating));
 
-        // Create JSON manually with grade as string because @JsonCreator expects String
         String jsonContent = String.format(
                 """
                         {
@@ -163,7 +165,44 @@ public class RatingsControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.rating.grade").value(5));
+
+        ArgumentCaptor<PostRateService.PostRateServiceRequestDTO> captor =
+                ArgumentCaptor.forClass(PostRateService.PostRateServiceRequestDTO.class);
+
+        verify(postRateService).saveRate(captor.capture());
+
+        assertNotNull(captor.getValue().grade(), "Grade object in DTO was null");
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return 400 when posting rating with non-numeric grade")
+    void shouldReturn400WhenPostingNonNumericGrade() throws Exception {
+        User mockUser = createUserMock();
+        MovieId movieId = new MovieId(UUID.randomUUID());
+
+        String jsonContent = String.format(
+                """
+                        {
+                          "userId": "%s",
+                          "movieId": {
+                            "id": "%s"
+                          },
+                          "grade": "abc"
+                        }""",
+                mockUser.getId(),
+                movieId.unwrap()
+        );
+
+        mockMvc.perform(post("/api/v1/ratings")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -196,6 +235,13 @@ public class RatingsControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
                 .andExpect(status().isNoContent());
+
+        ArgumentCaptor<PatchRateService.PatchRateServiceRequestDTO> captor =
+                ArgumentCaptor.forClass(PatchRateService.PatchRateServiceRequestDTO.class);
+
+        verify(patchRateService).patchRate(captor.capture());
+
+        assertNotNull(captor.getValue().grade(), "Grade object in DTO was null");
     }
 
     @Test

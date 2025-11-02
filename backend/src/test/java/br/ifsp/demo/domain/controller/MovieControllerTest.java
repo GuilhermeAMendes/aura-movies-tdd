@@ -93,7 +93,10 @@ public class MovieControllerTest {
         mockMvc.perform(get("/api/v1/movies/{id}", movieId.unwrap())
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.movie.title").value(movie.getTitle()))
+                .andExpect(jsonPath("$.movie.genre").value(movie.getGenre().toString()))
+                .andExpect(jsonPath("$.movie.movieId.id").value(movieId.unwrap().toString()));
     }
 
     @Test
@@ -102,10 +105,9 @@ public class MovieControllerTest {
     @DisplayName("Should return 200 when getting all movies successfully")
     void shouldReturn200WhenGettingAllMovies() throws Exception {
         User mockUser = createMockUser();
-        List<Movie> movies = List.of(
-                new Movie(new MovieId(UUID.randomUUID()), "Movie 1", Genre.ACTION),
-                new Movie(new MovieId(UUID.randomUUID()), "Movie 2", Genre.COMEDY)
-        );
+        Movie movie1 = new Movie(new MovieId(UUID.randomUUID()), "Movie 1", Genre.ACTION);
+        Movie movie2 = new Movie(new MovieId(UUID.randomUUID()), "Movie 2", Genre.COMEDY);
+        List<Movie> movies = List.of(movie1, movie2);
 
         when(getAllMoviesService.getAllMovies(any(GetAllMoviesService.GetAllMoviesRequestDTO.class)))
                 .thenReturn(new GetAllMoviesService.GetAllMoviesResponseDTO(movies));
@@ -113,7 +115,12 @@ public class MovieControllerTest {
         mockMvc.perform(get("/api/v1/movies")
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.movies.size()").value(2))
+                .andExpect(jsonPath("$.movies[0].title").value(movie1.getTitle()))
+                .andExpect(jsonPath("$.movies[0].genre").value(Genre.ACTION.toString()))
+                .andExpect(jsonPath("$.movies[1].title").value(movie2.getTitle()))
+                .andExpect(jsonPath("$.movies[1].movieId.id").value(movie2.getMovieId().unwrap().toString()));
     }
 
     @Test
