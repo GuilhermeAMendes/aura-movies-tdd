@@ -1,13 +1,10 @@
 "use client";
 
+// External Library
+import { Loader2, TriangleAlertIcon, InfoIcon } from "lucide-react";
+
 // Hooks
 import { useGetRatings } from "@/modules/rating/hooks/useGetRatings";
-
-// Types
-import type { Rating } from "@/modules/rating/types";
-
-// Helper
-import { formatDate } from "@/shared/utils/helper/formatter/dateFormatter";
 
 // Components
 import {
@@ -18,29 +15,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, TriangleAlertIcon, StarIcon, InfoIcon } from "lucide-react";
-
-function RatingItem({ rating }: { rating: Rating }) {
-  return (
-    <div className="flex flex-col sm:flex-row justify-between sm:items-center p-4 border-b last:border-b-0 hover:bg-muted/50 transition-colors">
-      <div className="mb-2 sm:mb-0">
-        <p className="font-semibold text-lg">Filme ID:</p>
-        <p className="text-sm text-muted-foreground font-mono">
-          {rating.movieId.id}
-        </p>
-      </div>
-      <div className="flex flex-col items-start sm:items-end">
-        <div className="flex items-center gap-1">
-          <StarIcon className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-          <span className="font-bold text-lg">{rating.grade}</span>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Avaliado em: {formatDate(rating.lastGradedAt)}
-        </p>
-      </div>
-    </div>
-  );
-}
+import RatingItem from "@/modules/rating/components/cards/RatingItem";
 
 export default function ProfilePage() {
   const { ratings, isLoading, error } = useGetRatings();
@@ -67,7 +42,6 @@ export default function ProfilePage() {
       );
     }
 
-    // Estado Vazio (sem avaliações)
     if (ratings.length === 0) {
       return (
         <Alert>
