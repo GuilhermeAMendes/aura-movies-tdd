@@ -57,7 +57,7 @@ export default function CatalogPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8">
+    <div>
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Catálogo Completo</h1>
         <p className="text-muted-foreground">

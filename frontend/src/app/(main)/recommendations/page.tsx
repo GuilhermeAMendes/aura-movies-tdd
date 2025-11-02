@@ -59,7 +59,7 @@ export default function RecommendationsPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8">
+    <div>
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">
           Recomendado para Você
@@ -68,7 +68,6 @@ export default function RecommendationsPage() {
           Filmes que selecionamos com base nas suas avaliações.
         </p>
       </div>
-
       <div>{renderContent()}</div>
     </div>
   );

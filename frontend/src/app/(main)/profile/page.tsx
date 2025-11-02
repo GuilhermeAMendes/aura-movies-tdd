@@ -65,7 +65,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8">
+    <div>
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="text-3xl font-bold">
