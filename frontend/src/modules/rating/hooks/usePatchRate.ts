@@ -14,7 +14,7 @@ import { isLeft } from "@/shared/patterns/either";
 import type { PatchRatingPayload } from "../types";
 
 interface UsePatchRateResponse {
-  patchRate: (payload: PatchRatingPayload) => Promise<void>;
+  patchRate: (payload: PatchRatingPayload) => Promise<boolean>;
   isLoading: boolean;
 }
 
@@ -30,11 +30,12 @@ export function usePatchRate(): UsePatchRateResponse {
         description: result.value.message,
       });
       setIsLoading(false);
-      return;
+      return false;
     }
 
     toast.success("Avaliação atualizada com sucesso!");
     setIsLoading(false);
+    return true;
   };
 
   return { patchRate, isLoading };

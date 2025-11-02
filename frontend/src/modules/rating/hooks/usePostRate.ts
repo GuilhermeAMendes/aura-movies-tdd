@@ -14,7 +14,7 @@ import { isLeft } from "@/shared/patterns/either";
 import type { PostRatingPayload } from "../types";
 
 interface UsePostRateResponse {
-  postRate: (payload: PostRatingPayload) => Promise<void>;
+  postRate: (payload: PostRatingPayload) => Promise<boolean>;
   isLoading: boolean;
 }
 
@@ -30,11 +30,12 @@ export function usePostRate(): UsePostRateResponse {
         description: result.value.message,
       });
       setIsLoading(false);
-      return;
+      return false;
     }
 
     toast.success("Avaliação criada com sucesso!");
     setIsLoading(false);
+    return true;
   };
 
   return { postRate, isLoading };
