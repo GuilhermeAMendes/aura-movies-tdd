@@ -1,6 +1,7 @@
 "use client";
 
 // External Library
+import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -135,6 +136,16 @@ export default function LoginPage() {
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? "Entrando..." : "Entrar"}
               </Button>
+
+              <p className="text-sm text-center">
+                Não possui uma conta?{" "}
+                <Link
+                  href="/register"
+                  className="font-medium text-primary underline"
+                >
+                  Clique aqui para registrar-se.
+                </Link>
+              </p>
             </form>
           </Form>
         </CardContent>
