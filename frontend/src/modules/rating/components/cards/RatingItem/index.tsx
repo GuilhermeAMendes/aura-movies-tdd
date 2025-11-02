@@ -13,11 +13,17 @@ interface RatingItemPayload {
 
 // Utils
 import { formatDate } from "@/shared/utils/helper/formatter/dateFormatter";
+import { useNavigationHandler } from "@/shared/hooks/navigation/useNavigation";
 
 export default function RatingItem({ rating, onSuccess }: RatingItemPayload) {
+  const { navigateTo } = useNavigationHandler();
+
   return (
     <div className="flex flex-col sm:flex-row justify-between sm:items-center p-4 border-b last:border-b-0 hover:bg-muted/50 transition-colors">
-      <div className="mb-2 sm:mb-0">
+      <div
+        className="mb-2 sm:mb-0 cursor-pointer"
+        onClick={() => navigateTo(`/movies/${rating.movieId.id}`)}
+      >
         <p className="font-semibold text-lg">{rating.title}</p>
         <p className="text-sm text-muted-foreground font-mono">
           {rating.movieId.id}
