@@ -1,8 +1,10 @@
 package br.ifsp.demo.domain.service.get;
 
 import br.ifsp.demo.domain.model.movie.Genre;
+import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.Movie;
 import br.ifsp.demo.domain.model.movie.MovieId;
+import br.ifsp.demo.domain.model.rating.Rating;
 import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.exception.UserNotFoundException;
@@ -16,6 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,11 +42,12 @@ public class GetMovieByIdServiceImplTest {
     @Test
     @Tag("UnitTest")
     @Tag("Structural")
-    @DisplayName("Should return movie when user and movie are found")
-    void shouldReturnMovieWhenUserAndMovieFound() {
+    @DisplayName("Should return movie and user rating when user and movie are found and user has rated")
+    void shouldReturnMovieAndRatingWhenUserAndMovieFoundAndUserHasRated() {
         UUID userId = UUID.randomUUID();
         MovieId movieId = new MovieId(UUID.randomUUID());
         Movie movie = new Movie(movieId, "Test Movie", Genre.ACTION);
+        Rating rating = new Rating(movieId, new Grade(5), java.time.LocalDateTime.now());
 
         User user = User.builder()
                 .id(userId)
@@ -50,6 +55,7 @@ public class GetMovieByIdServiceImplTest {
                 .lastname("User")
                 .email("test@example.com")
                 .password("password")
+                .ratings(new ArrayList<>(List.of(rating)))
                 .build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -60,6 +66,39 @@ public class GetMovieByIdServiceImplTest {
 
         assertThat(response.movie()).isNotNull();
         assertThat(response.movie()).isEqualTo(movie);
+        assertThat(response.rating()).isNotNull();
+        assertThat(response.rating()).isEqualTo(rating);
+        verify(userRepository, times(1)).findById(userId);
+        verify(movieRepository, times(1)).findById(movieId);
+    }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should return movie with null rating when user and movie are found but user hasn't rated")
+    void shouldReturnMovieWithNullRatingWhenUserAndMovieFoundButUserHasntRated() {
+        UUID userId = UUID.randomUUID();
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        Movie movie = new Movie(movieId, "Test Movie", Genre.ACTION);
+
+        User user = User.builder()
+                .id(userId)
+                .name("Test")
+                .lastname("User")
+                .email("test@example.com")
+                .password("password")
+                .ratings(new ArrayList<>())
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findById(movieId)).thenReturn(Optional.of(movie));
+
+        GetMovieByIdService.GetMovieByIdRequestDTO request = new GetMovieByIdService.GetMovieByIdRequestDTO(userId, movieId);
+        GetMovieByIdService.GetMovieByIdResponseDTO response = sut.getMovieById(request);
+
+        assertThat(response.movie()).isNotNull();
+        assertThat(response.movie()).isEqualTo(movie);
+        assertThat(response.rating()).isNull();
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findById(movieId);
     }

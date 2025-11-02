@@ -88,7 +88,7 @@ public class MovieControllerTest {
         Movie movie = new Movie(movieId, "Test Movie", Genre.ACTION);
 
         when(getMovieByIdService.getMovieById(any(GetMovieByIdService.GetMovieByIdRequestDTO.class)))
-                .thenReturn(new GetMovieByIdService.GetMovieByIdResponseDTO(movie));
+                .thenReturn(new GetMovieByIdService.GetMovieByIdResponseDTO(movie, null));
 
         mockMvc.perform(get("/api/v1/movies/{id}", movieId.unwrap())
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
@@ -96,7 +96,8 @@ public class MovieControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.movie.title").value(movie.getTitle()))
                 .andExpect(jsonPath("$.movie.genre").value(movie.getGenre().toString()))
-                .andExpect(jsonPath("$.movie.movieId.id").value(movieId.unwrap().toString()));
+                .andExpect(jsonPath("$.movie.movieId.id").value(movieId.unwrap().toString()))
+                .andExpect(jsonPath("$.rating").isEmpty());
     }
 
     @Test
