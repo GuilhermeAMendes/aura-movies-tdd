@@ -1,35 +1,30 @@
 "use client";
 
 // External Library
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-
-// Store
-import { useAuthStore } from "@/modules/auth/store/authStore";
-
-// Service
-import getRatingsService from "../service/get/getRatings";
-
-// Error
-import { ApplicationError } from "@/shared/errors/base/ApplicationError";
-
-// Type Guard
-import { Either, isLeft } from "@/shared/patterns/either";
 
 // Service
 import deleteRateService from "../service/delete/deleteRate";
 
+// Type Guard
+import { isLeft } from "@/shared/patterns/either";
+
+// Types
+
+import { DeleteRatePayload } from "../types";
+
 interface UseDeleteRateResponse {
-  deleteRate: (id: string) => Promise<void>;
+  deleteRate: (payload: DeleteRatePayload) => Promise<void>;
   isLoading: boolean;
 }
 
 export function useDeleteRate(): UseDeleteRateResponse {
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteRate = async (id: string) => {
+  const deleteRate = async (payload: DeleteRatePayload) => {
     setIsLoading(true);
-    const result = await deleteRateService({ movieId: id });
+    const result = await deleteRateService({ movieId: payload.movieId });
 
     if (isLeft(result)) {
       toast.error("Erro ao remover avaliação", {
