@@ -29,6 +29,10 @@ export function Header() {
     navigateTo("/login");
   };
 
+  const handleRegisterClick = () => {
+    navigateTo("/register");
+  };
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="flex h-16 items-center justify-between px-6">
@@ -44,13 +48,21 @@ export function Header() {
               <LogoutButton />
             </>
           ) : isHomePage ? (
-            <Button
-              onClick={handleLoginClick}
-              variant="ghost"
-              className="text-lg"
-            >
-              Login
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleRegisterClick}
+                variant="ghost"
+                className="text-lg"
+              >
+                Registrar
+              </Button>
+              <Button
+                onClick={handleLoginClick}
+                className="text-lg bg-black text-white hover:bg-neutral-800"
+              >
+                Login
+              </Button>
+            </div>
           ) : null}
         </nav>
       </div>
