@@ -19,7 +19,7 @@ import RatingItem from "@/modules/rating/components/cards/RatingItem";
 import { RatingItemSkeleton } from "@/modules/rating/components/cards/RatingItemSkeleton";
 
 export default function ProfilePage() {
-  const { ratings, isLoading, error } = useGetRatings();
+  const { ratings, refetch, isLoading, error } = useGetRatings();
 
   const renderContent = () => {
     if (isLoading) {
@@ -62,7 +62,11 @@ export default function ProfilePage() {
     return (
       <div className="flex flex-col">
         {ratings.map((rating) => (
-          <RatingItem key={rating.movieId.id} rating={rating} />
+          <RatingItem
+            key={rating.movieId.id}
+            rating={rating}
+            onSuccess={refetch}
+          />
         ))}
       </div>
     );

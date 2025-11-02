@@ -6,11 +6,15 @@ import { RemoveRate } from "../../buttons/RemoveRate";
 
 // Types
 import { Rating } from "@/modules/rating/types";
+interface RatingItemPayload {
+  rating: Rating;
+  onSuccess: () => void;
+}
 
 // Utils
 import { formatDate } from "@/shared/utils/helper/formatter/dateFormatter";
 
-export default function RatingItem({ rating }: { rating: Rating }) {
+export default function RatingItem({ rating, onSuccess }: RatingItemPayload) {
   return (
     <div className="flex flex-col sm:flex-row justify-between sm:items-center p-4 border-b last:border-b-0 hover:bg-muted/50 transition-colors">
       <div className="mb-2 sm:mb-0">
@@ -29,7 +33,7 @@ export default function RatingItem({ rating }: { rating: Rating }) {
             Avaliado em: {formatDate(rating.lastGradedAt)}
           </p>
         </div>
-        <RemoveRate id={rating.movieId.id} />
+        <RemoveRate id={rating.movieId.id} onSuccess={onSuccess} />
       </div>
     </div>
   );

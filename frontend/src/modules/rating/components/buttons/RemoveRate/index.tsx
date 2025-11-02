@@ -19,15 +19,17 @@ import { useDeleteRate } from "@/modules/rating/hooks/useDeleteRate";
 // Types
 interface RemoveRatePayload {
   id: string;
+  onSuccess: () => void;
 }
 
-export function RemoveRate({ id }: RemoveRatePayload) {
+export function RemoveRate({ id, onSuccess }: RemoveRatePayload) {
   const { token } = useAuthStore();
   const { deleteRate, isLoading } = useDeleteRate();
 
   const handleAccessClick = () => {
     if (isLoading) return;
     deleteRate({ movieId: id });
+    onSuccess();
   };
 
   return token ? (

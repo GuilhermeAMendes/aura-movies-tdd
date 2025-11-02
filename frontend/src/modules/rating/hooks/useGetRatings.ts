@@ -1,7 +1,7 @@
 "use client";
 
 // External Library
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 
 // Store
@@ -23,6 +23,7 @@ interface UseGetRatingsResponse {
   ratings: Rating[];
   isLoading: boolean;
   error: ApplicationError | null;
+  refetch: () => void;
 }
 
 export function useGetRatings(): UseGetRatingsResponse {
@@ -32,7 +33,7 @@ export function useGetRatings(): UseGetRatingsResponse {
 
   const { token, isSessionRestored } = useAuthStore();
 
-  const loadRatings = async () => {
+  const loadRatings = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -49,7 +50,7 @@ export function useGetRatings(): UseGetRatingsResponse {
 
     setRatings(result.value.ratedMovies);
     setIsLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (!isSessionRestored) return;
@@ -60,7 +61,7 @@ export function useGetRatings(): UseGetRatingsResponse {
     }
 
     loadRatings();
-  }, [token, isSessionRestored]);
+  }, [token, isSessionRestored, loadRatings]);
 
-  return { ratings, isLoading, error };
+  return { ratings, isLoading, error, refetch: loadRatings };
 }

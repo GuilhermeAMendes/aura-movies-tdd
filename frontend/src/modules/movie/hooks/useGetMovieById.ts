@@ -1,7 +1,7 @@
 "use client";
 
 // External Library
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 
 // Store
@@ -29,6 +29,7 @@ interface UseGetMovieByIdResponse {
   rating: Rating | null;
   isLoading: boolean;
   error: ApplicationError | null;
+  refetch: () => void;
 }
 
 export function useGetMovieById({
@@ -41,7 +42,7 @@ export function useGetMovieById({
 
   const { token, isSessionRestored } = useAuthStore();
 
-  const loadMovie = async () => {
+  const loadMovie = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -60,7 +61,7 @@ export function useGetMovieById({
     setMovie(movie);
     setRating(rating);
     setIsLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (!isSessionRestored) return;
@@ -71,7 +72,7 @@ export function useGetMovieById({
     }
 
     loadMovie();
-  }, [token, isSessionRestored, id]);
+  }, [token, isSessionRestored, id, loadMovie]);
 
-  return { movie, rating, isLoading, error };
+  return { movie, rating, isLoading, error, refetch: loadMovie };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { Loader2, StarIcon, TriangleAlertIcon } from "lucide-react";
+import { Loader2, TriangleAlertIcon } from "lucide-react";
 
 // Components
 import { Badge } from "@/components/ui/badge";
@@ -14,12 +14,13 @@ import { useGetMovieById } from "@/modules/movie/hooks/useGetMovieById";
 // Utils
 import { getIconForGenre } from "@/modules/movie/utils/genreIcons";
 import genreLabelMap from "@/modules/movie/utils/formatterLabel";
+import { MovieRatingForm } from "@/modules/rating/components/forms/MovieRatingForm";
 
 export default function MovieDetailPage() {
   const params = useParams();
   const id = params.id as string;
 
-  const { movie, rating, isLoading, error } = useGetMovieById({ id });
+  const { movie, rating, refetch, isLoading, error } = useGetMovieById({ id });
 
   const renderContent = () => {
     if (isLoading) {
@@ -77,17 +78,26 @@ export default function MovieDetailPage() {
                 {movie.title}
               </h1>
               <GenericSynopsis movie={movie} />
-              {rating ? (
-                <div className="flex items-center gap-1">
-                  <StarIcon className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                  <span className="font-bold text-lg">{rating.grade}</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1">
-                  <StarIcon className="w-5 h-5 text-gray-400 fill-gratext-gray-400" />
-                  <span className="font-bold text-lg">Filme não avaliado</span>
-                </div>
-              )}
+              <div className="flex gap-1">
+                {/* {rating ? (
+                  <div className="flex items-center gap-1">
+                    <StarIcon className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                    <span className="font-bold text-lg">{rating.grade}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1">
+                    <StarIcon className="w-5 h-5 text-gray-400 fill-gratext-gray-400" />
+                    <span className="font-bold text-lg">
+                      Filme não avaliado
+                    </span>
+                  </div>
+                )} */}
+              </div>
+              <MovieRatingForm
+                movieId={movie.movieId.id}
+                existingRating={rating}
+                onSuccess={refetch}
+              />
             </div>
           </div>
         </div>
