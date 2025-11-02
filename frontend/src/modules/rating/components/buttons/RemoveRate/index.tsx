@@ -27,7 +27,7 @@ export function RemoveRate({ id }: RemoveRatePayload) {
 
   const handleAccessClick = () => {
     if (isLoading) return;
-    deleteRate(id);
+    deleteRate({ movieId: id });
   };
 
   return token ? (

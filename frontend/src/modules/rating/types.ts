@@ -3,12 +3,13 @@ import type { MovieId } from "../movie/types";
 
 export interface Rating {
   movieId: MovieId;
+  title: string;
   grade: number;
   lastGradedAt: string;
 }
 
 export interface GetRatingResponse {
-  ratings: Rating[];
+  ratedMovies: Rating[];
 }
 
 export interface PostRatingPayload extends Omit<Rating, "lastGradedAt"> {}

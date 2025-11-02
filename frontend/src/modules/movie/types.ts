@@ -1,3 +1,5 @@
+import { Rating } from "../rating/types";
+
 export type MovieId = {
   id: string;
 };
@@ -26,6 +28,7 @@ export interface GetMovieByIdPayload {
 
 export interface GetMovieByIdResponse {
   movie: Movie;
+  rating: Rating;
 }
 
 export interface GetMoviesResponse {

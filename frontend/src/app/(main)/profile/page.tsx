@@ -1,7 +1,7 @@
 "use client";
 
 // External Library
-import { Loader2, TriangleAlertIcon, InfoIcon } from "lucide-react";
+import { TriangleAlertIcon, InfoIcon } from "lucide-react";
 
 // Hooks
 import { useGetRatings } from "@/modules/rating/hooks/useGetRatings";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import RatingItem from "@/modules/rating/components/cards/RatingItem";
+import { RatingItemSkeleton } from "@/modules/rating/components/cards/RatingItemSkeleton";
 
 export default function ProfilePage() {
   const { ratings, isLoading, error } = useGetRatings();
@@ -23,9 +24,12 @@ export default function ProfilePage() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex justify-center items-center h-48">
-          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="ml-3 text-muted-foreground">Buscando avaliações...</p>
+        <div className="flex flex-col space-y-4">
+          {Array(3)
+            .fill(0)
+            .map((_, index) => (
+              <RatingItemSkeleton key={index} />
+            ))}
         </div>
       );
     }
