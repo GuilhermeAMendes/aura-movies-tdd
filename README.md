@@ -4,6 +4,27 @@ Este sistema foi desenvolvido como parte da disciplina de Validação e Teste de
 
 O sistema permite que um usuário (cliente) avalie filmes de um catálogo e receba recomendações personalizadas com base em seu histórico de avaliações.
 
+Todos os testes foram feitos pensando em cobertura total de todos os critérios e decisões do package `domain` do backend. Além de testes para matar mutações geradas pela ferramenta Pitest.
+
+### Como rodar a aplicação
+
+Abra a pasta `backend/` no IntelliJ, depois rode o arquivo principal `AuraMoviesTddAPi`. Isto deve subir o backend da aplicação com dados mockados.
+
+Depois, abra a pasta `frontend/` no VSCode, ou qualquer terminal, e digite:
+
+```bash
+npm install
+```
+Para instalar as dependências. Depois:
+
+
+```bash
+npm run dev
+```
+
+Pronto! Agora acesse o frontend via localhost:3000.
+
+
 ### Raiz do Agregado
 
 * *User*: É o agregado responsável por gerenciar o perfil e as interações de um usuário. Ele encapsula todas as avaliações feitas por aquele cliente e garante regras de negócio. Todas as operações, como adicionar uma nova avaliação, devem passar pelo objeto User.
