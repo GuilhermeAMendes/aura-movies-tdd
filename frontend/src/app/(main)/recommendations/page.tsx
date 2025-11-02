@@ -1,5 +1,7 @@
-// Local: src/app/(main)/recommendations/page.tsx
 "use client";
+
+// External Library
+import { TriangleAlertIcon, InfoIcon } from "lucide-react";
 
 // Hooks
 import { useGetRecommendations } from "@/modules/recommendation/hooks/useGetRecommendations";
@@ -7,7 +9,7 @@ import { useGetRecommendations } from "@/modules/recommendation/hooks/useGetReco
 // Components
 import { MovieCard } from "@/modules/movie/components/cards/MovieCard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, TriangleAlertIcon, InfoIcon } from "lucide-react";
+import { MovieCardSkeleton } from "@/modules/movie/components/cards/MovieCardSkeleton";
 
 export default function RecommendationsPage() {
   const { movies, isLoading, error } = useGetRecommendations();
@@ -15,11 +17,12 @@ export default function RecommendationsPage() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="ml-3 text-muted-foreground">
-            Buscando suas recomendações...
-          </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+          {Array(10)
+            .fill(0)
+            .map((_, index) => (
+              <MovieCardSkeleton key={index} />
+            ))}
         </div>
       );
     }
