@@ -238,4 +238,44 @@ public class GetRecommendationServiceImplTest {
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findAll();
     }
+
+    @Test
+    @Tag("UnitTest")
+    @Tag("Structural")
+    @DisplayName("Should include movies with grade exactly 4")
+    void shouldIncludeMoviesWithGradeExactly4() {
+        UUID userId = UUID.randomUUID();
+        List<Movie> mockMovieList = createMockMovieList();
+
+        // User rates "Inception" (SCI_FI) with a 4
+        Movie ratedMovie = mockMovieList.stream()
+                .filter(m -> m.getTitle().equals("Inception"))
+                .findFirst().orElseThrow();
+
+        // We expect "Blade Runner 2049" (SCI_FI) as a recommendation
+        Movie expectedMovie = mockMovieList.stream()
+                .filter(m -> m.getTitle().equals("Blade Runner 2049"))
+                .findFirst().orElseThrow();
+
+        Rating rating = new Rating(ratedMovie.getMovieId(), new Grade(4), LocalDateTime.now());
+        User user = User.builder()
+                .id(userId)
+                .name("Lucas")
+                .lastname("Java")
+                .email("lucasjava@gmail.com")
+                .password("secret")
+                .ratings(List.of(rating))
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findAll()).thenReturn(mockMovieList);
+
+        List<Movie> result = sut.recommendMovies(new GetRecommendationService.RecommendationServiceRequestDTO(userId)).recommendations();
+
+        // The mutant (grade > 4) would find no preferred genres and return an empty list.
+        // The original code (grade >= 4) finds SCI_FI and returns "Blade Runner 2049".
+        assertThat(result).isNotNull().isNotEmpty();
+        assertThat(result).contains(expectedMovie);
+        assertThat(result).doesNotContain(ratedMovie);
+    }
 }
