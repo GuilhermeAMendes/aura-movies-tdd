@@ -15,7 +15,7 @@ import { isLeft } from "@/shared/patterns/either";
 import { DeleteRatePayload } from "../types";
 
 interface UseDeleteRateResponse {
-  deleteRate: (payload: DeleteRatePayload) => Promise<void>;
+  deleteRate: (payload: DeleteRatePayload) => Promise<boolean>;
   isLoading: boolean;
 }
 
@@ -31,11 +31,12 @@ export function useDeleteRate(): UseDeleteRateResponse {
         description: result.value.message,
       });
       setIsLoading(false);
-      return;
+      return false;
     }
 
     toast.success("Avaliação removida com sucesso!");
     setIsLoading(false);
+    return true;
   };
 
   return { deleteRate, isLoading };

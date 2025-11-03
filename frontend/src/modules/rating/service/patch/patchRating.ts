@@ -21,7 +21,7 @@ export default async function patchRating(
   try {
     const { data: response } = await AxiosClient.patch<void>(
       `ratings/${encodeURIComponent(movieId)}`,
-      grade
+      { grade: grade }
     );
     return right(response);
   } catch (error) {

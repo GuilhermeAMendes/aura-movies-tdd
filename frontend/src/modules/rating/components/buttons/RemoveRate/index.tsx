@@ -26,10 +26,10 @@ export function RemoveRate({ id, onSuccess }: RemoveRatePayload) {
   const { token } = useAuthStore();
   const { deleteRate, isLoading } = useDeleteRate();
 
-  const handleAccessClick = () => {
+  const handleAccessClick = async () => {
     if (isLoading) return;
-    deleteRate({ movieId: id });
-    onSuccess();
+    const result = await deleteRate({ movieId: id });
+    if (result) onSuccess();
   };
 
   return token ? (
