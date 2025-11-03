@@ -147,4 +147,46 @@ public class GetMovieByIdServiceImplTest {
         verify(userRepository, times(1)).findById(userId);
         verify(movieRepository, times(1)).findById(movieId);
     }
+
+    @Test
+    @Tag("Mutation")
+    @Tag("UnitTest")
+    @DisplayName("Should return correct rating when user has multiple ratings and requested one is not first")
+    void shouldReturnCorrectRatingWhenUserHasMultipleRatings() {
+        UUID userId = UUID.randomUUID();
+
+        MovieId movieId_A = new MovieId(UUID.randomUUID());
+        Movie movie_A = new Movie(movieId_A, "Movie A", Genre.ACTION);
+        Rating ratingA = new Rating(movieId_A, new Grade(5), java.time.LocalDateTime.now().minusDays(1));
+
+        MovieId movieId_B = new MovieId(UUID.randomUUID());
+        Movie movie_B = new Movie(movieId_B, "Movie B", Genre.COMEDY);
+        Rating ratingB = new Rating(movieId_B, new Grade(3), java.time.LocalDateTime.now());
+
+        List<Rating> userRatings = new ArrayList<>(List.of(ratingA, ratingB));
+
+        User user = User.builder()
+                .id(userId)
+                .name("Multi-Rating User")
+                .lastname("Test")
+                .email("multi@example.com")
+                .password("password")
+                .ratings(userRatings)
+                .build();
+
+        GetMovieByIdService.GetMovieByIdRequestDTO request = new GetMovieByIdService.GetMovieByIdRequestDTO(userId, movieId_B);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(movieRepository.findById(movieId_B)).thenReturn(Optional.of(movie_B));
+
+        GetMovieByIdService.GetMovieByIdResponseDTO response = sut.getMovieById(request);
+
+        assertThat(response.movie()).isNotNull();
+        assertThat(response.movie()).isEqualTo(movie_B);
+        assertThat(response.rating()).isNotNull();
+        assertThat(response.rating()).isEqualTo(ratingB);
+
+        verify(userRepository, times(1)).findById(userId);
+        verify(movieRepository, times(1)).findById(movieId_B);
+    }
 }
