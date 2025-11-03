@@ -1,3 +1,5 @@
+"use client";
+
 // External Library
 import { StarIcon } from "lucide-react";
 
@@ -29,6 +31,7 @@ export default function RatingItem({ rating, onSuccess }: RatingItemPayload) {
           {rating.movieId.id}
         </p>
       </div>
+
       <div className="flex items-center gap-4">
         <div className="flex flex-col items-start sm:items-end">
           <div className="flex items-center gap-1">
@@ -39,7 +42,9 @@ export default function RatingItem({ rating, onSuccess }: RatingItemPayload) {
             Avaliado em: {formatDate(rating.lastGradedAt)}
           </p>
         </div>
-        <RemoveRate id={rating.movieId.id} onSuccess={onSuccess} />
+        <div onClick={(e) => e.stopPropagation()}>
+          <RemoveRate id={rating.movieId.id} onSuccess={onSuccess} />
+        </div>
       </div>
     </div>
   );
