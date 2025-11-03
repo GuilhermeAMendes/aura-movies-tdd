@@ -1,5 +1,6 @@
 package br.ifsp.demo.domain.service.get;
 
+import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.model.movie.Genre;
 import br.ifsp.demo.domain.model.movie.Grade;
 import br.ifsp.demo.domain.model.movie.Movie;
@@ -144,5 +145,35 @@ public class GetRatedMoviesServiceImplTest {
 
         verify(jpaUserRepository, times(1)).findUserById(userId);
 
+    }
+
+    @Test
+    @Tag("Mutation")
+    @Tag("UnitTest")
+    @DisplayName("Should throw MovieNotFoundException when user has rating for a missing movie")
+    void shouldThrowMovieNotFoundExceptionWhenMovieIsMissing() {
+        UUID userId = UUID.randomUUID();
+        MovieId missingMovieId = new MovieId(UUID.randomUUID());
+
+        Rating ratingForMissingMovie = new Rating(missingMovieId, new Grade(4), LocalDateTime.now());
+
+        User user = User.builder().id(userId)
+                .name("Lucas")
+                .lastname("Java")
+                .email("lucasjava@gmail.com")
+                .ratings(List.of(ratingForMissingMovie))
+                .password("secret").build();
+
+        GetRatedMoviesService.RatedServiceRequestDTO request = new GetRatedMoviesService.RatedServiceRequestDTO(userId);
+
+        when(jpaUserRepository.findUserById(userId)).thenReturn(Optional.of(user));
+        when(jpaMovieRepository.findById(missingMovieId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> sut.restoreRatedMovies(request))
+                .isInstanceOf(MovieNotFoundException.class)
+                .hasMessage("Movie not found for rating");
+
+        verify(jpaUserRepository, times(1)).findUserById(userId);
+        verify(jpaMovieRepository, times(1)).findById(missingMovieId);
     }
 }
