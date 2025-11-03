@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>br.ifsp</groupId>
-    <artifactId>demo-auth-app</artifactId>
+    <artifactId>aura-movies-tdd</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo-auth-app</name>
-    <description>demo-auth-app</description>
+    <name>aura-movies-tdd</name>
+    <description>aura-movies-tdd</description>
     <url/>
     <licenses>
         <license/>
