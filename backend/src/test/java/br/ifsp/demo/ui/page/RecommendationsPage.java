@@ -2,12 +2,10 @@ package br.ifsp.demo.ui.page;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.List;
 
 public class RecommendationsPage extends BasePageObject {
 
@@ -34,8 +32,11 @@ public class RecommendationsPage extends BasePageObject {
         return new MyRatingsPage(driver);
     }
 
-    public List<WebElement> recommendationCards() {
-        // Ajustar seletor pro card de filme (pode ser uma div, article, etc.)
-        return driver.findElements(By.cssSelector("[data-test='movie-card']"));
+    public boolean isRecommendationsTitleVisible() {
+        // h1 com texto "Recomendado para Você"
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//h1[contains(text(),'Recomendado para Você')]")
+        ));
+        return true; // se chegar aqui, deu bom
     }
 }

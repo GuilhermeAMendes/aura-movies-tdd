@@ -16,18 +16,20 @@ public class HomePage extends BasePageObject {
     }
 
     public LoginPage clickLogin() {
-        driver.findElement(By.linkText("Login")).click();
+        // Botão "Login" no header
+        driver.findElement(By.xpath("//button[normalize-space()='Login']")).click();
         return new LoginPage(driver);
     }
 
     public RegisterPage clickRegister() {
-        driver.findElement(By.linkText("Registrar")).click();
+        // Botão "Registrar" no header
+        driver.findElement(By.xpath("//button[normalize-space()='Registrar']")).click();
         return new RegisterPage(driver);
     }
 
     public LoginPage clickStartNow() {
-        // Botão "Comece a Avaliar Agora!"
-        driver.findElement(By.xpath("//*[contains(text(),'Comece a Avaliar Agora')]")).click();
+        // Botão grande "Comece a Avaliar Agora!"
+        driver.findElement(By.xpath("//button[contains(.,'Comece a Avaliar Agora')]")).click();
         return new LoginPage(driver);
     }
 }

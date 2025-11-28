@@ -1,8 +1,10 @@
 package br.ifsp.demo.ui.page;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.WebDriver;
 
 import java.time.Duration;
 
@@ -17,7 +19,14 @@ public class CatalogPage extends BasePageObject {
         wait.until(ExpectedConditions.urlContains("/movies"));
     }
 
-    // Depois vou adicionar métodos como:
-    // - listar cards
-    // - abrir um filme específico etc.
+    public MovieDetailsPage openFirstMovieCard() {
+        // Pega o primeiro link que leva para /movies/{id}
+        WebElement firstMovieLink = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("a[href^='/movies/']")
+                )
+        );
+        firstMovieLink.click();
+        return new MovieDetailsPage(driver);
+    }
 }

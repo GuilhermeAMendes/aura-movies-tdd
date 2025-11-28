@@ -1,8 +1,9 @@
 package br.ifsp.demo.ui.page;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.WebDriver;
 
 import java.time.Duration;
 
@@ -17,5 +18,17 @@ public class MyRatingsPage extends BasePageObject {
         wait.until(ExpectedConditions.urlContains("/profile"));
     }
 
-    // Depois vou colocar métodos para ler/remover avaliações.
+    public boolean isEmptyMessageVisible() {
+        // AlertTitle com texto "Nenhuma avaliação encontrada"
+        return !driver.findElements(
+                By.xpath("//*[contains(text(),'Nenhuma avaliação encontrada')]")
+        ).isEmpty();
+    }
+
+    public boolean hasRatingForMovie(String movieTitle) {
+        // Procura qualquer elemento de texto contendo o título do filme
+        return !driver.findElements(
+                By.xpath("//*[contains(text(),'" + movieTitle + "')]")
+        ).isEmpty();
+    }
 }
