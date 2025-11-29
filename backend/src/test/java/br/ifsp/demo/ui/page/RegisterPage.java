@@ -18,6 +18,8 @@ public class RegisterPage extends BasePageObject {
         wait.until(ExpectedConditions.urlContains("/register"));
     }
 
+    // ----------- Preenchimento de campos -----------
+
     public RegisterPage typeName(String name) {
         driver.findElement(By.name("name")).clear();
         driver.findElement(By.name("name")).sendKeys(name);
@@ -42,11 +44,51 @@ public class RegisterPage extends BasePageObject {
         return this;
     }
 
+    // ----------- Submissão -----------
+
+    /**
+     * Fluxo feliz: cadastro válido, redireciona para /login.
+     */
     public LoginPage submitRegister() {
-        // Botão "Registrar"
         driver.findElement(By.xpath("//button[contains(text(),'Registrar')]")).click();
         // Depois de registrar ele redireciona para /login
         wait.until(ExpectedConditions.urlContains("/login"));
         return new LoginPage(driver);
+    }
+
+    /**
+     * Fluxo inválido: espera-se que a página continue em /register
+     * e apenas exiba mensagens de validação.
+     */
+    public RegisterPage submitWithErrors() {
+        driver.findElement(By.xpath("//button[contains(text(),'Registrar')]")).click();
+        // Continua na mesma página; não esperamos redirect aqui.
+        return this;
+    }
+
+    // ----------- Mensagens de validação -----------
+
+    public boolean isNameRequiredMessageVisible() {
+        return !driver.findElements(
+                By.xpath("//*[contains(normalize-space(),'O nome é obrigatório')]")
+        ).isEmpty();
+    }
+
+    public boolean isLastNameRequiredMessageVisible() {
+        return !driver.findElements(
+                By.xpath("//*[contains(normalize-space(),'O sobrenome é obrigatório')]")
+        ).isEmpty();
+    }
+
+    public boolean isEmailInvalidMessageVisible() {
+        return !driver.findElements(
+                By.xpath("//*[contains(normalize-space(),'Por favor, insira um e-mail válido.')]")
+        ).isEmpty();
+    }
+
+    public boolean isPasswordRequiredMessageVisible() {
+        return !driver.findElements(
+                By.xpath("//*[contains(normalize-space(),'A senha é obrigatória')]")
+        ).isEmpty();
     }
 }

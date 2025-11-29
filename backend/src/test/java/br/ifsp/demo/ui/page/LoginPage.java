@@ -17,6 +17,8 @@ public class LoginPage extends BasePageObject {
         wait.until(ExpectedConditions.urlContains("/login"));
     }
 
+    // ----------- Preenchimento de campos -----------
+
     public LoginPage typeEmail(String email) {
         driver.findElement(By.name("email")).clear();
         driver.findElement(By.name("email")).sendKeys(email);
@@ -29,21 +31,44 @@ public class LoginPage extends BasePageObject {
         return this;
     }
 
+    // ----------- Submissão -----------
+
+    /**
+     * Fluxo feliz: credenciais válidas, redireciona para /recommendations.
+     */
     public RecommendationsPage submitValidLogin() {
         driver.findElement(By.xpath("//button[contains(text(),'Entrar')]")).click();
         wait.until(ExpectedConditions.urlContains("/recommendations"));
         return new RecommendationsPage(driver);
     }
 
-    public LoginPage submitInvalidLogin() {
+    /**
+     * Fluxo inválido: credenciais erradas, permanece na tela de login
+     * e exibe um toast "Falha no Login".
+     */
+    public LoginPage submitWithInvalidCredentials() {
         driver.findElement(By.xpath("//button[contains(text(),'Entrar')]")).click();
-        // aqui você pode esperar aparecer o alerta de erro
+        // Não há redirect; o teste deve checar o toast de erro.
         return this;
     }
 
-    // Exemplo para futuro: pegar mensagem de erro (quando você descobrir o seletor)
-    public String getErrorMessage() {
-        // Ajustar o seletor conforme o componente de alerta (shadcn alert?)
-        return driver.findElement(By.cssSelector("[role='alert']")).getText();
+    // ----------- Mensagens de validação / erro -----------
+
+    public boolean isEmailValidationMessageVisible() {
+        return !driver.findElements(
+                By.xpath("//*[contains(normalize-space(),'Por favor, insira um e-mail válido.')]")
+        ).isEmpty();
+    }
+
+    public boolean isPasswordRequiredMessageVisible() {
+        return !driver.findElements(
+                By.xpath("//*[contains(normalize-space(),'A senha é obrigatória.')]")
+        ).isEmpty();
+    }
+
+    public boolean isLoginErrorToastVisible() {
+        return !driver.findElements(
+                By.xpath("//*[contains(normalize-space(),'Falha no Login')]")
+        ).isEmpty();
     }
 }
