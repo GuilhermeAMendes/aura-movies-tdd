@@ -2,7 +2,6 @@ package br.ifsp.demo.ui.page;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,18 +14,45 @@ public class CatalogPage extends BasePageObject {
     public CatalogPage(WebDriver driver) {
         super(driver);
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        // URL do catálogo: /movies
+        // rota do catálogo: /movies
         wait.until(ExpectedConditions.urlContains("/movies"));
     }
 
+    // ----------- Ações na página -----------
+
     public MovieDetailsPage openFirstMovieCard() {
-        // Pega o primeiro link que leva para /movies/{id}
-        WebElement firstMovieLink = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        By.cssSelector("a[href^='/movies/']")
-                )
-        );
-        firstMovieLink.click();
+        // cards são links para /movies/{id}
+        wait.until(ExpectedConditions.elementToBeClickable(
+                By.cssSelector("a[href^='/movies/']"))
+        ).click();
+
         return new MovieDetailsPage(driver);
+    }
+
+    // ----------- Navegação (tabs da navbar) -----------
+
+    public RecommendationsPage goToRecommendationsTab() {
+        wait.until(ExpectedConditions.elementToBeClickable(
+                By.linkText("Recomendações"))
+        ).click();
+        return new RecommendationsPage(driver);
+    }
+
+    public MyRatingsPage goToMyRatingsTab() {
+        wait.until(ExpectedConditions.elementToBeClickable(
+                By.linkText("Minhas Avaliações"))
+        ).click();
+        return new MyRatingsPage(driver);
+    }
+
+    // ----------- Verificações -----------
+
+    public String getHeaderTitle() {
+        // h1 "Catálogo Completo"
+        return wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//h1")
+                )
+        ).getText();
     }
 }

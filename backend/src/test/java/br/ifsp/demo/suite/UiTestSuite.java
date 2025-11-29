@@ -5,7 +5,7 @@ import org.junit.platform.suite.api.SelectPackages;
 import org.junit.platform.suite.api.Suite;
 
 @Suite
-@SelectPackages("br.ifsp.demo")
+@SelectPackages("br.ifsp.demo.ui.test")
 @IncludeTags("UiTest")
 public class UiTestSuite {
 }
