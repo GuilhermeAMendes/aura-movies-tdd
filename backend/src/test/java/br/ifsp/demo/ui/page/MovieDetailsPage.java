@@ -62,4 +62,22 @@ public class MovieDetailsPage extends BasePageObject {
                 )
         ).getText();
     }
+
+    // ---- edição e remoção ----
+
+    public MovieDetailsPage clickEditRating() {
+        // botão de editar: primeiro botão após o texto "Sua nota:"
+        wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//*[contains(normalize-space(),'Sua nota:')]/following::button[1]")
+        )).click();
+        return this;
+    }
+
+    public MovieDetailsPage clickDeleteRating() {
+        // botão de remover: segundo botão após o texto "Sua nota:"
+        wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//*[contains(normalize-space(),'Sua nota:')]/following::button[2]")
+        )).click();
+        return this;
+    }
 }

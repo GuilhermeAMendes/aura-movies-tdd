@@ -53,4 +53,40 @@ public class MyRatingsUiTest extends BaseAuthenticatedUiTest {
                 .as("deve exibir o filme avaliado na lista de avaliações")
                 .isTrue();
     }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Deve permitir remover uma avaliação a partir da aba Minhas Avaliações")
+    void shouldAllowUserToDeleteRatingFromMyRatingsPage() {
+        // Usuário novo registrado e logado
+        AuthSession session = registerRandomUserAndLogin();
+        RecommendationsPage recommendationsPage = session.recommendationsPage();
+
+        // Avaliar um filme pelo catálogo
+        CatalogPage catalogPage = recommendationsPage.goToCatalogTab();
+        MovieDetailsPage movieDetailsPage = catalogPage.openFirstMovieCard();
+
+        String movieTitle = movieDetailsPage.getMovieTitle();
+
+        int rating = 3;
+        movieDetailsPage
+                .selectRating(rating)
+                .saveRating();
+
+        // Ir para "Minhas Avaliações"
+        driver.get(BASE_URL + "/profile");
+        MyRatingsPage myRatingsPage = new MyRatingsPage(driver);
+
+        assertThat(myRatingsPage.hasRatingForMovie(movieTitle))
+                .as("o filme avaliado deve aparecer na aba Minhas Avaliações")
+                .isTrue();
+
+        // Remover a avaliação pela aba
+        myRatingsPage.removeRatingForMovie(movieTitle);
+
+        // Aqui é bom dar uma pequena espera se necessário, mas vamos apenas re-checar
+        assertThat(myRatingsPage.hasRatingForMovie(movieTitle))
+                .as("o filme não deve mais aparecer após remover a avaliação")
+                .isFalse();
+    }
 }

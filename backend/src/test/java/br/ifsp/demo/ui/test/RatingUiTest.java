@@ -38,4 +38,70 @@ public class RatingUiTest extends BaseAuthenticatedUiTest {
                 .as("a nota exibida deve ser igual à nota escolhida")
                 .isEqualTo(expectedRating);
     }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Deve permitir alterar a nota de um filme já avaliado")
+    void shouldAllowUserToEditExistingRating() {
+        // Usuário novo registrado e logado
+        AuthSession session = registerRandomUserAndLogin();
+        RecommendationsPage recommendationsPage = session.recommendationsPage();
+
+        // Ir para o catálogo e avaliar um filme
+        CatalogPage catalogPage = recommendationsPage.goToCatalogTab();
+        MovieDetailsPage movieDetailsPage = catalogPage.openFirstMovieCard();
+
+        // Avaliação inicial
+        int initialRating = 2;
+        movieDetailsPage
+                .selectRating(initialRating)
+                .saveRating();
+
+        assertThat(movieDetailsPage.getDisplayedRatingValue())
+                .as("a nota inicial deve ser registrada")
+                .isEqualTo(initialRating);
+
+        // Alterar a nota
+        int newRating = 5;
+        movieDetailsPage
+                .clickEditRating()
+                .selectRating(newRating)
+                .saveRating();
+
+        int actualRating = movieDetailsPage.getDisplayedRatingValue();
+
+        assertThat(actualRating)
+                .as("a nova nota deve substituir a nota anterior")
+                .isEqualTo(newRating);
+    }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Deve permitir remover a avaliação de um filme na tela de detalhes")
+    void shouldAllowUserToDeleteRatingFromMovieDetails() {
+        // Usuário novo registrado e logado
+        AuthSession session = registerRandomUserAndLogin();
+        RecommendationsPage recommendationsPage = session.recommendationsPage();
+
+        // Ir para o catálogo e avaliar um filme
+        CatalogPage catalogPage = recommendationsPage.goToCatalogTab();
+        MovieDetailsPage movieDetailsPage = catalogPage.openFirstMovieCard();
+
+        int rating = 4;
+        movieDetailsPage
+                .selectRating(rating)
+                .saveRating();
+
+        assertThat(movieDetailsPage.getDisplayedRatingValue())
+                .as("a nota deve ser registrada antes de remover")
+                .isEqualTo(rating);
+
+        // Remover a avaliação
+        movieDetailsPage.clickDeleteRating();
+
+        // Após remover, o formulário de rating deve voltar a aparecer (botões 0-5)
+        assertThat(movieDetailsPage.isRatingFormVisible())
+                .as("o formulário de avaliação deve voltar a aparecer após remover a nota")
+                .isTrue();
+    }
 }
