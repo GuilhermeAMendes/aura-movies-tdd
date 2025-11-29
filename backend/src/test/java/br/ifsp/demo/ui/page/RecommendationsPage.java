@@ -17,26 +17,50 @@ public class RecommendationsPage extends BasePageObject {
         wait.until(ExpectedConditions.urlContains("/recommendations"));
     }
 
+    // ----------- Navegação -----------
+
     public RecommendationsPage goToRecommendationsTab() {
-        driver.findElement(By.linkText("Recomendações")).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Recomendações")))
+                .click();
         return this;
     }
 
     public CatalogPage goToCatalogTab() {
-        driver.findElement(By.linkText("Catálogo")).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Catálogo")))
+                .click();
         return new CatalogPage(driver);
     }
 
     public MyRatingsPage goToMyRatingsTab() {
-        driver.findElement(By.linkText("Minhas Avaliações")).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Minhas Avaliações")))
+                .click();
         return new MyRatingsPage(driver);
     }
 
+    // ----------- Verificações -----------
+
     public boolean isRecommendationsTitleVisible() {
-        // h1 com texto "Recomendado para Você"
         wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//h1[contains(text(),'Recomendado para Você')]")
         ));
-        return true; // se chegar aqui, deu bom
+        return true; // se não explodiu, está visível
+    }
+
+    public String getHeaderTitle() {
+        return wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//h1")
+                )
+        ).getText();
+    }
+
+    /**
+     * Verifica se existe ao menos um card de filme.
+     * Os movie cards são links para "/movies/{UUID}"
+     */
+    public boolean hasAnyRecommendationCard() {
+        return !driver.findElements(
+                By.cssSelector("a[href^='/movies/']")
+        ).isEmpty();
     }
 }
