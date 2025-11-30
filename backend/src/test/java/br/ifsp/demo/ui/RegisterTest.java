@@ -5,6 +5,7 @@ import br.ifsp.demo.ui.utils.pages.RegisterPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,14 +25,13 @@ public class RegisterTest extends BaseTest {
     @Test
     void successfulRegistrationTest() {
         RegisterPage registerPage = new RegisterPage(driver, wait);
-        registerPage.open();
 
         registerPage.performRegister(VALID_FIRST_NAME, VALID_LAST_NAME, email, VALID_PASSWORD);
 
         waitForUrlContains("/login");
 
-        String toast = registerPage.getToastMessagePart("Registro bem-sucedido!");
+        final By successToast = By.xpath("//div[contains(text(), 'Registro bem-sucedido!')]");
 
-        assertThat(toast).isNotEmpty();
+        assertThat(successToast).isNotNull();
     }
 }
