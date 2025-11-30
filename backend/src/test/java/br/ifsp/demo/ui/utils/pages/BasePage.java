@@ -11,6 +11,8 @@ public class BasePage {
     protected WebDriver driver;
     protected WebDriverWait wait;
 
+    protected final String FRONT_URL = "http://localhost:3000/";
+
     public BasePage(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
         this.wait = wait;
@@ -27,21 +29,6 @@ public class BasePage {
 
     protected void waitForUrlToBe(String expectedUrl) {
         wait.until(ExpectedConditions.urlToBe(expectedUrl));
-    }
-
-    protected By toastLocator() {
-        return By.xpath("//li[@role='status']");
-    }
-
-    protected String getToastText() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(toastLocator()));
-        return driver.findElement(toastLocator()).getText();
-    }
-
-    protected String waitForToastContaining(String expectedParte, long timeoutSeconds) {
-        WebDriverWait localWait = new WebDriverWait(driver, java.time.Duration.ofSeconds(timeoutSeconds));
-        localWait.until(ExpectedConditions.textToBePresentInElementLocated(toastLocator(), expectedParte));
-        return driver.findElement(toastLocator()).getText();
     }
 
     protected void scrollToElement(By locator) {
