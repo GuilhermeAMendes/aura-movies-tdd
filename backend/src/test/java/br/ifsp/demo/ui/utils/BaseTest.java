@@ -15,6 +15,7 @@ public class BaseTest {
     protected WebDriver driver;
     protected WebDriverWait wait;
     protected final String FRONT_URL = "http://localhost:3000/";
+    protected final String BACK_URL = "http://localhost:8080/";
     protected final Duration TIMEOUT = Duration.ofSeconds(15);
 
     @BeforeEach
