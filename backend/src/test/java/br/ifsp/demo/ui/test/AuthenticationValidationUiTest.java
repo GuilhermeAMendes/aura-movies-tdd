@@ -47,7 +47,7 @@ public class AuthenticationValidationUiTest extends BaseSeleniumTest {
         driver.get(BASE_URL + "/login");
         LoginPage loginPage = new LoginPage(driver);
 
-        // Usa um e-mail qualquer e senha incorreta
+        // Usa um e-mail qualquer bem formatado, mas inexistente, e senha incorreta
         loginPage
                 .typeEmail("usuario.inexistente@email.com")
                 .typePassword("senha-errada")
@@ -55,6 +55,46 @@ public class AuthenticationValidationUiTest extends BaseSeleniumTest {
 
         assertThat(loginPage.isLoginErrorToastVisible())
                 .as("deve exibir toast de erro 'Falha no Login'")
+                .isTrue();
+    }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Deve exibir mensagem de e-mail inválido ao registrar com e-mail mal formatado")
+    void shouldShowEmailValidationWhenRegisteringWithInvalidEmailFormat() {
+        driver.get(BASE_URL + "/register");
+        RegisterPage registerPage = new RegisterPage(driver);
+
+        // Preenche campos obrigatórios com valores válidos,
+        // mas usa um e-mail claramente inválido (classe 'formato inválido')
+        registerPage
+                .typeName("Maria")
+                .typeLastName("Silva")
+                .typeEmail("maria.sem-arroba") // inválido
+                .typePassword("SenhaForte123!");
+
+        registerPage.submitWithErrors();
+
+        assertThat(registerPage.isEmailInvalidMessageVisible())
+                .as("deve exibir mensagem de e-mail inválido no cadastro")
+                .isTrue();
+    }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Deve exibir mensagem de e-mail inválido ao tentar login com e-mail mal formatado")
+    void shouldShowEmailValidationWhenLoginWithInvalidEmailFormat() {
+        driver.get(BASE_URL + "/login");
+        LoginPage loginPage = new LoginPage(driver);
+
+        // E-mail sem formato válido, mas senha preenchida
+        loginPage
+                .typeEmail("email-invalido")
+                .typePassword("qualquerCoisa")
+                .submitWithInvalidCredentials();
+
+        assertThat(loginPage.isEmailValidationMessageVisible())
+                .as("deve exibir mensagem de e-mail inválido na tela de login")
                 .isTrue();
     }
 }
