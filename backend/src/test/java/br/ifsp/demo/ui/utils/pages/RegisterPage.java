@@ -1,4 +1,4 @@
-package br.ifsp.demo.ui.pages;
+package br.ifsp.demo.ui.utils.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
