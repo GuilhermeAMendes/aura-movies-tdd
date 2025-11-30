@@ -28,4 +28,8 @@ public class RegisterPage extends BasePage {
         type(passwordInput, password);
         click(registerButton);
     }
+
+    public String getToastMessagePart(String expectedPart) {
+        return waitForToastContaining(expectedPart, 5);
+    }
 }
