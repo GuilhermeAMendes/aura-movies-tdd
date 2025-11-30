@@ -29,6 +29,21 @@ public class BasePage {
         wait.until(ExpectedConditions.urlToBe(expectedUrl));
     }
 
+    protected By toastLocator() {
+        return By.xpath("//li[@role='status']");
+    }
+
+    protected String getToastText() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(toastLocator()));
+        return driver.findElement(toastLocator()).getText();
+    }
+
+    protected String waitForToastContaining(String expectedParte, long timeoutSeconds) {
+        WebDriverWait localWait = new WebDriverWait(driver, java.time.Duration.ofSeconds(timeoutSeconds));
+        localWait.until(ExpectedConditions.textToBePresentInElementLocated(toastLocator(), expectedParte));
+        return driver.findElement(toastLocator()).getText();
+    }
+
     protected void scrollToElement(By locator) {
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", element);
