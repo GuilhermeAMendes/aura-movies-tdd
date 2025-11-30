@@ -31,6 +31,14 @@ public class BasePage {
         wait.until(ExpectedConditions.urlToBe(expectedUrl));
     }
 
+    protected String getFieldErrorMessage(String fieldName) {
+        String xpathExpression = String.format("//input[@name='%s']/following-sibling::p", fieldName);
+        WebElement errorElement = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathExpression))
+        );
+        return errorElement.getText();
+    }
+
     protected void scrollToElement(By locator) {
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", element);
