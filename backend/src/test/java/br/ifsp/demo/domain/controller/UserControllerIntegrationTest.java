@@ -118,4 +118,16 @@ public class UserControllerIntegrationTest {
                         .content("{}"))
                 .andExpect(status().isBadRequest());
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /register - Should return 400 when request body is malformed JSON")
+    void shouldReturn400WhenRegisterRequestBodyIsMalformed() throws Exception {
+        String malformedJson = "{ invalid json }";
+
+        mockMvc.perform(post("/api/v1/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(malformedJson))
+                .andExpect(status().isBadRequest());
+    }
 }
