@@ -129,4 +129,21 @@ public class GetRecommendationServiceIntegrationTest {
         assertThat(recommendationGenres).contains(Genre.ACTION, Genre.DRAMA);
         assertThat(recommendationGenres).doesNotContain(Genre.COMEDY);
     }
+
+    @Test
+    @DisplayName("Should exclude already rated movies from recommendations")
+    void shouldExcludeAlreadyRatedMoviesFromRecommendations() {
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(5)); // Action Movie 1
+        user.addRating(testMovies.get(1).getMovieId(), new Grade(4)); // Action Movie 2
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+        var request = new GetRecommendationService.RecommendationServiceRequestDTO(testUser.getId());
+        var response = recommendationService.recommendMovies(request);
+        List<Movie> recommendations = response.recommendations();
+
+        assertThat(recommendations).extracting(Movie::getMovieId)
+                .doesNotContain(testMovies.get(0).getMovieId(), testMovies.get(1).getMovieId());
+    }
 }
