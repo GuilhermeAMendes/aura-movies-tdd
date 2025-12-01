@@ -166,4 +166,21 @@ public class MovieControllerIntegrationTest {
                 .andExpect(jsonPath("$.movies[1].title").value(movie2.getTitle()))
                 .andExpect(jsonPath("$.movies[1].movieId.id").value(movie2.getMovieId().unwrap().toString()));
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("GET /movies - Should return 200 with empty list when no movies exist")
+    void shouldReturn200WithEmptyListWhenNoMoviesExist() throws Exception {
+        User mockUser = createMockUser();
+
+        when(getAllMoviesService.getAllMovies(any(GetAllMoviesService.GetAllMoviesRequestDTO.class)))
+                .thenReturn(new GetAllMoviesService.GetAllMoviesResponseDTO(List.of()));
+
+        mockMvc.perform(get("/api/v1/movies")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.movies").isArray())
+                .andExpect(jsonPath("$.movies").isEmpty());
+    }
 }
