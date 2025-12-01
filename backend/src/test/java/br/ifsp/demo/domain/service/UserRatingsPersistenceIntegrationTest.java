@@ -169,5 +169,29 @@ public class UserRatingsPersistenceIntegrationTest {
         assertThat(finalUser.getRatings()).hasSize(1);
         assertThat(finalUser.getRatings().get(0).getMovieId()).isEqualTo(testMovie2.getMovieId());
     }
+    @Test
+    @DisplayName("Should persist lastGradedAt timestamp when adding rating")
+    void shouldPersistLastGradedAtTimestamp() {
+        Grade grade = new Grade(5);
+        LocalDateTime beforeAdd = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovie1.getMovieId(), grade);
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+
+        LocalDateTime afterAdd = LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS);
+
+        User retrievedUser = userRepository.findById(testUser.getId()).orElseThrow();
+        Rating retrievedRating = retrievedUser.getRatings().stream()
+                .filter(r -> r.getMovieId().equals(testMovie1.getMovieId()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(retrievedRating.getLastGradedAt()).isNotNull();
+        assertThat(retrievedRating.getLastGradedAt())
+                .isAfterOrEqualTo(beforeAdd)
+                .isBeforeOrEqualTo(afterAdd);
+    }
 
 }
