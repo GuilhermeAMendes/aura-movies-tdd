@@ -110,4 +110,22 @@ public class GetRatedMoviesServiceIntegrationTest {
         List<GetRatedMoviesService.RatedMovieDTO> ratedMovies = response.ratedMovies();
         assertThat(ratedMovies).isEmpty();
     }
+    @Test
+    @DisplayName("Should correctly map rating grades and timestamps from database")
+    void shouldCorrectlyMapRatingGradesAndTimestamps() {
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(5));
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+
+        var request = new GetRatedMoviesService.RatedServiceRequestDTO(testUser.getId());
+        var response = ratedMoviesService.restoreRatedMovies(request);
+        List<GetRatedMoviesService.RatedMovieDTO> ratedMovies = response.ratedMovies();
+
+        assertThat(ratedMovies).hasSize(1);
+        GetRatedMoviesService.RatedMovieDTO ratedMovie = ratedMovies.get(0);
+        assertThat(ratedMovie.grade().value()).isEqualTo(5);
+        assertThat(ratedMovie.lastGradedAt()).isNotNull();
+    }
 }
