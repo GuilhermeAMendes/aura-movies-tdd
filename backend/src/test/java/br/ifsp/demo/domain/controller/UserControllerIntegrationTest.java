@@ -142,4 +142,29 @@ public class UserControllerIntegrationTest {
                         .content(content))
                 .andExpect(status().isUnsupportedMediaType());
     }
+    //------------------------------------------------------------------------------------------------
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /authenticate - Should return 200 when authentication is successful")
+    void shouldReturn200WhenAuthenticationIsSuccessful() throws Exception {
+        String jsonContent = """
+                {
+                    "email": "lucas@gmail.com",
+                    "password": "senha123"
+                }
+                """;
+
+        String jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.token";
+        AuthResponse response = new AuthResponse(jwtToken);
+
+        when(authenticationService.authenticate(any(AuthRequest.class)))
+                .thenReturn(response);
+
+        mockMvc.perform(post("/api/v1/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value(jwtToken));
+    }
 }
