@@ -109,4 +109,24 @@ public class GetRecommendationServiceIntegrationTest {
         assertThat(recommendations).extracting(Movie::getMovieId)
                 .containsAll(testMovies.stream().map(Movie::getMovieId).collect(Collectors.toList()));
     }
+
+    @Test
+    @DisplayName("Should aggregate preferred genres from positively rated movies")
+    void shouldAggregatePreferredGenresFromPositivelyRatedMovies() {
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(5)); // ACTION
+        user.addRating(testMovies.get(4).getMovieId(), new Grade(4)); // DRAMA
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+        var request = new GetRecommendationService.RecommendationServiceRequestDTO(testUser.getId());
+        var response = recommendationService.recommendMovies(request);
+        List<Movie> recommendations = response.recommendations();
+
+        Set<Genre> recommendationGenres = recommendations.stream()
+                .map(Movie::getGenre)
+                .collect(Collectors.toSet());
+        assertThat(recommendationGenres).contains(Genre.ACTION, Genre.DRAMA);
+        assertThat(recommendationGenres).doesNotContain(Genre.COMEDY);
+    }
 }
