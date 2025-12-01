@@ -81,5 +81,11 @@ public class JpaUserRepositoryIntegrationTest {
         assertThat(found).isPresent();
         assertThat(found.get().getId()).isEqualTo(userId);
     }
+    @Test
+    @DisplayName("Should return empty when user ID not found")
+    void shouldReturnEmptyWhenUserIdNotFound() {
+        Optional<User> found = userRepository.findUserById(UUID.randomUUID());
+        assertThat(found).isEmpty();
+    }
 
 }
