@@ -73,4 +73,18 @@ public class JpaMovieRepositoryIntegrationTest {
             entityManager.flush();
         }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
     }
+    @Test
+    @DisplayName("Should enforce NOT NULL constraint on genre field")
+    void shouldEnforceNotNullConstraintOnGenre() {
+        Movie movieWithoutGenre = new Movie(
+                new MovieId(UUID.randomUUID()),
+                "Test Movie",
+                null
+        );
+        assertThatThrownBy(() -> {
+            entityManager.persist(movieWithoutGenre);
+            entityManager.flush();
+        }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
+    }
+
 }
