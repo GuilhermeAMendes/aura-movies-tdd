@@ -187,4 +187,14 @@ public class UserControllerIntegrationTest {
                         .content(jsonContent))
                 .andExpect(status().isUnauthorized());
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /authenticate - Should return 400 when request body is empty")
+    void shouldReturn400WhenAuthenticateRequestBodyIsEmpty() throws Exception {
+        mockMvc.perform(post("/api/v1/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
+    }
 }
