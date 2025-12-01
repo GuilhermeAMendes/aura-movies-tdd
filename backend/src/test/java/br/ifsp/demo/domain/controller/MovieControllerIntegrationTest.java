@@ -130,4 +130,17 @@ public class MovieControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value(exceptionMessage))
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"));
     }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("GET /movies/{id} - Should return 400 when movie id is invalid format")
+    void shouldReturn400WhenMovieIdIsInvalidFormat() throws Exception {
+        User mockUser = createMockUser();
+
+        mockMvc.perform(get("/api/v1/movies/{id}", "invalid-uuid")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
