@@ -13,6 +13,7 @@ public class LoginPage extends BasePage {
     private final By passwordInput = By.xpath("//input[@name='password']");
     private final By loginButton = By.xpath("//button[contains(text(), 'Entrar')]");
     private final By logoutButton = By.xpath("//button[.//span[normalize-space()='Sair']]");
+    private final By toastNotification = By.cssSelector("[data-sonner-toast]");
 
     public LoginPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
@@ -47,6 +48,7 @@ public class LoginPage extends BasePage {
     }
 
     public void performLogout() {
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(toastNotification));
         click(logoutButton);
     }
 
