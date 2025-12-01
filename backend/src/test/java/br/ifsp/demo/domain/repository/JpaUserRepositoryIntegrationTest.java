@@ -143,4 +143,23 @@ public class JpaUserRepositoryIntegrationTest {
             entityManager.flush();
         }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
     }
+
+    @Test
+    @DisplayName("Should enforce NOT NULL constraint on password field")
+    void shouldEnforceNotNullConstraintOnPassword() {
+        User userWithoutPassword = User.builder()
+                .id(UUID.randomUUID())
+                .name("Test")
+                .lastname("User")
+                .email("test4@example.com")
+                .password(null)
+                .role(Role.USER)
+                .ratings(new java.util.ArrayList<>())
+                .build();
+
+        assertThatThrownBy(() -> {
+            entityManager.persist(userWithoutPassword);
+            entityManager.flush();
+        }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
+    }
 }
