@@ -100,4 +100,34 @@ public class MovieControllerIntegrationTest {
                 .andExpect(jsonPath("$.movie.movieId.id").value(movieId.unwrap().toString()))
                 .andExpect(jsonPath("$.rating").isEmpty());
     }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("GET /movies/{id} - Should return 401 when user is not authenticated")
+    void shouldReturn401WhenNotAuthenticatedForGetMovieById() throws Exception {
+        mockMvc.perform(get("/api/v1/movies/{id}", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("GET /movies/{id} - Should return 404 when movie is not found")
+    void shouldReturn404WhenMovieIsNotFound() throws Exception {
+        UUID movieId = UUID.randomUUID();
+        User mockUser = createMockUser();
+        String exceptionMessage = "Movie not found";
+
+        when(getMovieByIdService.getMovieById(any(GetMovieByIdService.GetMovieByIdRequestDTO.class)))
+                .thenThrow(new MovieNotFoundException(exceptionMessage));
+
+        mockMvc.perform(get("/api/v1/movies/{id}", movieId)
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(exceptionMessage))
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"));
+    }
 }
