@@ -102,6 +102,60 @@ public class RatingLifecycleTest extends BaseTest {
                 .isFalse();
     }
 
-    // TODO:
-    // 1. CRIAR CASO E TESTE PARA DELETAR DIRETO PELO MOVIE DETAIL CARD E NÃO PELOS RATINGS
+    @Tag("UiTest")
+    @Test
+    void shouldDeleteRatingFromMovieDetailPage() {
+        CatalogPage catalogPage = new CatalogPage(driver, wait);
+        MovieDetailPage detailPage = new MovieDetailPage(driver, wait);
+        MyRatingsPage myRatingsPage = new MyRatingsPage(driver, wait);
+
+        catalogPage.navigateToCatalog();
+        catalogPage.clickFirstMovie();
+
+        wait.until(ExpectedConditions.urlContains("/movies/"));
+
+        String targetMovieTitle = detailPage.getMovieTitle().trim();
+        System.out.println("Filme selecionado para teste de delete: [" + targetMovieTitle + "]");
+
+        int rating = 4;
+        detailPage.rateMovie(rating);
+
+        myRatingsPage.navigateToMyRatings();
+        wait.until(ExpectedConditions.urlContains("/profile"));
+
+        int savedRating = myRatingsPage.getRatingForMovie(targetMovieTitle);
+        assertThat(savedRating)
+                .as("A avaliação deve ter sido salva com nota %d", rating)
+                .isEqualTo(rating);
+
+        myRatingsPage.clickMovieToEdit(targetMovieTitle);
+        wait.until(ExpectedConditions.urlContains("/movies/"));
+
+        By deleteButtonOnDetailPage = By.xpath("//div[contains(@class, 'rounded-lg')]//button[.//svg[contains(@class, 'lucide-trash')]]");
+        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(deleteButtonOnDetailPage));
+        deleteButton.click();
+
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException ignored) {}
+
+        myRatingsPage.navigateToMyRatings();
+        wait.until(ExpectedConditions.urlContains("/profile"));
+
+        boolean ratingStillExists;
+        try {
+            new WebDriverWait(driver, java.time.Duration.ofSeconds(2))
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(
+                            "//div[contains(@class, 'cursor-pointer')][.//p[contains(., \"%s\")]]",
+                            targetMovieTitle.trim()
+                    ))));
+            ratingStillExists = true;
+        } catch (Exception e) {
+            ratingStillExists = false;
+        }
+
+        assertThat(ratingStillExists)
+                .as("A avaliação do filme '%s' deve ter sido removida após delete na página de detalhes", targetMovieTitle)
+                .isFalse();
+    }
 }
