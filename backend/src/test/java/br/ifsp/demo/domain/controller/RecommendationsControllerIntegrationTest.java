@@ -88,7 +88,7 @@ public class RecommendationsControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
-                .andExpect(jsonPath("$.recommendedMovies").isArray());
+                .andExpect(jsonPath("$.recommendations").isArray());
     }
     @Test
     @Tag("ApiTest")
@@ -112,6 +112,6 @@ public class RecommendationsControllerIntegrationTest {
                         .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.recommendedMovies").isEmpty());
+                .andExpect(jsonPath("$.recommendations").isEmpty());
     }
 }
