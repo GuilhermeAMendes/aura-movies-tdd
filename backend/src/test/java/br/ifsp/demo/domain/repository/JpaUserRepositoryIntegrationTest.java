@@ -172,4 +172,24 @@ public class JpaUserRepositoryIntegrationTest {
         assertThat(found.get().getRatings()).isNotNull();
         assertThat(found.get().getRatings()).isEmpty();
     }
+
+    @Test
+    @DisplayName("Should enforce unique constraint on user email")
+    void shouldEnforceUniqueConstraintOnEmail() {
+        entityManager.persistAndFlush(testUser);
+        User duplicateEmailUser = User.builder()
+                .id(UUID.randomUUID())
+                .name("Another")
+                .lastname("User")
+                .email("test@example.com")
+                .password("password456")
+                .role(Role.USER)
+                .ratings(new java.util.ArrayList<>())
+                .build();
+
+        assertThatThrownBy(() -> {
+            entityManager.persist(duplicateEmailUser);
+            entityManager.flush();
+        }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
+    }
 }
