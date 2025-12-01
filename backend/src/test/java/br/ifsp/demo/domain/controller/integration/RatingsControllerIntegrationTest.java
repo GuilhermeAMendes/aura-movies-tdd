@@ -307,4 +307,39 @@ public class RatingsControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value(exceptionMessage))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"));
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /ratings - Should return 400 when sending invalid argument")
+    void shouldReturn400WhenInvalidArgument() throws Exception {
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        User mockUser = createUserMock();
+        String exceptionMessage = "Illegal argument";
+
+        String jsonContent = String.format(
+                """
+                        {
+                          "movieId": {
+                            "id": "%s"
+                          },
+                          "grade": "%d"
+                        }""",
+                movieId.unwrap(),
+                5
+        );
+
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
+
+        when(postRateService.saveRate(any(PostRateService.PostRateServiceRequestDTO.class)))
+                .thenThrow(new IllegalArgumentException(exceptionMessage));
+
+        mockMvc.perform(post("/api/v1/ratings")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(exceptionMessage))
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"));
+    }
 }
