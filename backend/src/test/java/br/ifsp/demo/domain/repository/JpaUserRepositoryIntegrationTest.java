@@ -70,4 +70,16 @@ public class JpaUserRepositoryIntegrationTest {
         assertThat(found).isEmpty();
     }
 
+    @Test
+    @DisplayName("Should find user by ID using custom query")
+    void shouldFindUserById() {
+        UUID userId = testUser.getId();
+        entityManager.persistAndFlush(testUser);
+
+        Optional<User> found = userRepository.findUserById(userId);
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getId()).isEqualTo(userId);
+    }
+
 }
