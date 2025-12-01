@@ -87,6 +87,25 @@ public class UserRepositoryPersistenceTest {
         assertThat(fetchedUser.getRatings().get(0).getGrade().value()).isEqualTo(5);
     }
 
+    @Test
+    @DisplayName("Should delete user ratings when user is deleted (Cascade)")
+    void shouldDeleteUserRatingsWhenUserIsDeleted() {
+        User user = EntityBuilder.createRandomUser();
+        user.addRating(new MovieId(UUID.randomUUID()), new Grade(4));
+        user.addRating(new MovieId(UUID.randomUUID()), new Grade(5));
+        userRepository.saveAndFlush(user);
+
+        UUID userId = user.getId();
+
+        User userBeforeDelete = userRepository.findById(userId).orElseThrow();
+        assertThat(userBeforeDelete.getRatings()).hasSize(2);
+
+        userRepository.deleteById(userId);
+        userRepository.flush();
+
+        assertThat(userRepository.findById(userId)).isEmpty();
+    }
+
     @TestConfiguration
     static class TestConfig {
         @Bean
