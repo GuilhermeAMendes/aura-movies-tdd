@@ -260,5 +260,26 @@ public class UserRatingsPersistenceIntegrationTest {
 
         assertThat(avgGrade).isEqualTo(4.0);
     }
+    @Test
+    @DisplayName("Should find maximum grade from user ratings using MAX aggregation")
+    void shouldFindMaximumGradeFromUserRatings() {
+        Movie movie3 = new Movie(new MovieId(UUID.randomUUID()), "Movie 3", Genre.DRAMA);
+        entityManager.persistAndFlush(movie3);
+
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovie1.getMovieId(), new Grade(3));
+        user.addRating(testMovie2.getMovieId(), new Grade(5));
+        user.addRating(movie3.getMovieId(), new Grade(2));
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+        User retrievedUser = userRepository.findById(testUser.getId()).orElseThrow();
+        int maxGrade = retrievedUser.getRatings().stream()
+                .mapToInt(r -> r.getGrade().value())
+                .max()
+                .orElse(0);
+
+        assertThat(maxGrade).isEqualTo(5);
+    }
 
 }
