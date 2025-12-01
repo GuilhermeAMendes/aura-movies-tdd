@@ -86,5 +86,20 @@ public class JpaMovieRepositoryIntegrationTest {
             entityManager.flush();
         }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
     }
+    @Test
+    @DisplayName("Should retrieve all movies using inherited findAll method")
+    void shouldRetrieveAllMovies() {
+        Movie movie1 = new Movie(new MovieId(UUID.randomUUID()), "Movie 1", Genre.ACTION);
+        Movie movie2 = new Movie(new MovieId(UUID.randomUUID()), "Movie 2", Genre.COMEDY);
+        Movie movie3 = new Movie(new MovieId(UUID.randomUUID()), "Movie 3", Genre.DRAMA);
 
+        entityManager.persistAndFlush(movie1);
+        entityManager.persistAndFlush(movie2);
+        entityManager.persistAndFlush(movie3);
+
+        List<Movie> allMovies = movieRepository.findAll();
+        assertThat(allMovies).hasSizeGreaterThanOrEqualTo(3);
+        assertThat(allMovies).extracting(Movie::getTitle)
+                .contains("Movie 1", "Movie 2", "Movie 3");
+    }
 }
