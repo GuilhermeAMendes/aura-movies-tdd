@@ -192,4 +192,22 @@ public class JpaUserRepositoryIntegrationTest {
             entityManager.flush();
         }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
     }
+    @Test
+    @DisplayName("Should allow multiple users with different emails")
+    void shouldAllowMultipleUsersWithDifferentEmails() {
+        entityManager.persistAndFlush(testUser);
+        User anotherUser = User.builder()
+                .id(UUID.randomUUID())
+                .name("Another")
+                .lastname("User")
+                .email("different@example.com")
+                .password("password456")
+                .role(Role.USER)
+                .ratings(new java.util.ArrayList<>())
+                .build();
+
+        entityManager.persistAndFlush(anotherUser);
+        long userCount = userRepository.count();
+        assertThat(userCount).isGreaterThanOrEqualTo(2);
+    }
 }
