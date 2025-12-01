@@ -15,11 +15,7 @@ public class MyRatingsPage extends BasePageObject {
     public MyRatingsPage(WebDriver driver) {
         super(driver);
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        // antes: esperava urlContains("/profile"), o que estava gerando timeout
-        // agora deixamos para os métodos de verificação (como getHeaderTitle) fazerem os waits necessários
     }
-
-    // ----------- Navegação (tabs da navbar) -----------
 
     public RecommendationsPage goToRecommendationsTab() {
         wait.until(ExpectedConditions.elementToBeClickable(
@@ -34,8 +30,6 @@ public class MyRatingsPage extends BasePageObject {
         ).click();
         return new CatalogPage(driver);
     }
-
-    // ----------- Verificações -----------
 
     public boolean isEmptyMessageVisible() {
         // AlertTitle com texto "Nenhuma avaliação encontrada"
@@ -59,8 +53,6 @@ public class MyRatingsPage extends BasePageObject {
                 )
         ).getText();
     }
-
-    // ----------- Remoção de avaliação -----------
 
     public void removeRatingForMovie(String movieTitle) {
         // 1) encontra o elemento que contém o título do filme

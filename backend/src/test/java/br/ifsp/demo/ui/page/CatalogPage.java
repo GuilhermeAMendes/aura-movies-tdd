@@ -18,8 +18,6 @@ public class CatalogPage extends BasePageObject {
         wait.until(ExpectedConditions.urlContains("/movies"));
     }
 
-    // ----------- Ações na página -----------
-
     public MovieDetailsPage openFirstMovieCard() {
         // cards são links para /movies/{id}
         wait.until(ExpectedConditions.elementToBeClickable(
@@ -28,8 +26,6 @@ public class CatalogPage extends BasePageObject {
 
         return new MovieDetailsPage(driver);
     }
-
-    // ----------- Navegação (tabs da navbar) -----------
 
     public RecommendationsPage goToRecommendationsTab() {
         wait.until(ExpectedConditions.elementToBeClickable(
@@ -44,8 +40,6 @@ public class CatalogPage extends BasePageObject {
         ).click();
         return new MyRatingsPage(driver);
     }
-
-    // ----------- Verificações -----------
 
     public String getHeaderTitle() {
         // h1 "Catálogo Completo"

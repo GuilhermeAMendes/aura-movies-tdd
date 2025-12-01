@@ -3,11 +3,6 @@ package br.ifsp.demo.ui;
 import br.ifsp.demo.ui.page.*;
 import com.github.javafaker.Faker;
 
-/**
- * Base para testes de UI que precisam de um usuário autenticado.
- * Fornece helpers para registrar um novo usuário e fazer login,
- * além de logar com usuários já existentes (ex: lucas@gmail.com).
- */
 public abstract class BaseAuthenticatedUiTest extends BaseSeleniumTest {
 
     protected final Faker faker = new Faker();
@@ -46,9 +41,7 @@ public abstract class BaseAuthenticatedUiTest extends BaseSeleniumTest {
         return new AuthSession(name, lastName, email, password, recommendationsPage);
     }
 
-    /**
-     * Faz login com um usuário já existente (ex: lucas@gmail.com / senha).
-     */
+    // Faz login com um usuário já existente (ex: lucas@gmail.com / senha).
     protected RecommendationsPage loginAsExistingUser(String email, String password) {
         driver.get(BASE_URL + "/login");
         LoginPage loginPage = new LoginPage(driver);
@@ -59,9 +52,7 @@ public abstract class BaseAuthenticatedUiTest extends BaseSeleniumTest {
                 .submitValidLogin();
     }
 
-    /**
-     * Representa o contexto autenticado: credenciais + página inicial logada.
-     */
+    // Representa o contexto autenticado: credenciais + página inicial logada.
     public static class AuthSession {
         private final String name;
         private final String lastName;

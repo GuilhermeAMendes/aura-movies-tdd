@@ -18,8 +18,6 @@ public class RegisterPage extends BasePageObject {
         wait.until(ExpectedConditions.urlContains("/register"));
     }
 
-    // ----------- Preenchimento de campos -----------
-
     public RegisterPage typeName(String name) {
         driver.findElement(By.name("name")).clear();
         driver.findElement(By.name("name")).sendKeys(name);
@@ -44,11 +42,7 @@ public class RegisterPage extends BasePageObject {
         return this;
     }
 
-    // ----------- Submissão -----------
-
-    /**
-     * Fluxo feliz: cadastro válido, redireciona para /login.
-     */
+    // Fluxo feliz: cadastro válido, redireciona para /login.
     public LoginPage submitRegister() {
         driver.findElement(By.xpath("//button[contains(text(),'Registrar')]")).click();
         // Depois de registrar ele redireciona para /login
@@ -56,17 +50,12 @@ public class RegisterPage extends BasePageObject {
         return new LoginPage(driver);
     }
 
-    /**
-     * Fluxo inválido: espera-se que a página continue em /register
-     * e apenas exiba mensagens de validação.
-     */
+    // Fluxo inválido: espera-se que a página continue em /register e apenas exiba mensagens de validação.
     public RegisterPage submitWithErrors() {
         driver.findElement(By.xpath("//button[contains(text(),'Registrar')]")).click();
         // Continua na mesma página; não esperamos redirect aqui.
         return this;
     }
-
-    // ----------- Mensagens de validação -----------
 
     public boolean isNameRequiredMessageVisible() {
         return !driver.findElements(

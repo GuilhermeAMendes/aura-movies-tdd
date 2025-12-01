@@ -15,20 +15,14 @@ public abstract class BaseSeleniumTest {
 
     @BeforeEach
     void setUp() {
-        // Configura o driver automaticamente
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
 
-        // Pequena espera implícita global
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 
-        // Hook para abrir a página inicial do teste
         setInitialPage();
     }
 
-    /**
-     * Hook que as subclasses podem sobrescrever para definir a página inicial.
-     */
     protected void setInitialPage() {
     }
 

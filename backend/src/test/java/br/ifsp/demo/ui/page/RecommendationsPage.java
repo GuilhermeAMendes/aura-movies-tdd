@@ -19,8 +19,6 @@ public class RecommendationsPage extends BasePageObject {
         wait.until(ExpectedConditions.urlContains("/recommendations"));
     }
 
-    // ----------- Navegação -----------
-
     public RecommendationsPage goToRecommendationsTab() {
         wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Recomendações")))
                 .click();
@@ -51,15 +49,10 @@ public class RecommendationsPage extends BasePageObject {
                 ExpectedConditions.elementToBeClickable(By.xpath(logoutXPath))
         );
 
-        // Usa JS pra garantir o clique mesmo se tiver tooltip/overlay
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", logoutElement);
 
-        // Após o logout, o app te manda pra HOME ("/"), não para "/login"
-        // O próprio construtor de HomePage já valida a URL.
         return new HomePage(driver);
     }
-
-    // ----------- Verificações -----------
 
     public boolean isRecommendationsTitleVisible() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(

@@ -63,8 +63,6 @@ public class MovieDetailsPage extends BasePageObject {
         ).getText();
     }
 
-    // ---- edição e remoção ----
-
     public MovieDetailsPage clickEditRating() {
         // botão de editar: primeiro botão após o texto "Sua nota:"
         wait.until(ExpectedConditions.elementToBeClickable(

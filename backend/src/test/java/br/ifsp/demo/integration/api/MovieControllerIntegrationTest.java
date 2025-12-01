@@ -8,11 +8,13 @@ import br.ifsp.demo.utils.EntityBuilder;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
-
+@Tag("ApiTest")
+@Tag("IntegrationTest")
 public class MovieControllerIntegrationTest extends BaseApiIntegrationTest {
 
     @Autowired

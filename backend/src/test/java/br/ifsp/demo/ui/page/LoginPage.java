@@ -31,28 +31,18 @@ public class LoginPage extends BasePageObject {
         return this;
     }
 
-    // ----------- Submissão -----------
-
-    /**
-     * Fluxo feliz: credenciais válidas, redireciona para /recommendations.
-     */
+    // Fluxo feliz: credenciais válidas, redireciona para /recommendations.
     public RecommendationsPage submitValidLogin() {
         driver.findElement(By.xpath("//button[contains(text(),'Entrar')]")).click();
         wait.until(ExpectedConditions.urlContains("/recommendations"));
         return new RecommendationsPage(driver);
     }
 
-    /**
-     * Fluxo inválido: credenciais erradas, permanece na tela de login
-     * e exibe um toast "Falha no Login".
-     */
+    // Fluxo inválido: credenciais erradas, permanece na tela de login e exibe um toast "Falha no Login".
     public LoginPage submitWithInvalidCredentials() {
         driver.findElement(By.xpath("//button[contains(text(),'Entrar')]")).click();
-        // Não há redirect; o teste deve checar o toast de erro.
         return this;
     }
-
-    // ----------- Mensagens de validação / erro -----------
 
     public boolean isEmailValidationMessageVisible() {
         return !driver.findElements(

@@ -33,6 +33,5 @@ public class AuthorizationUiTest extends BaseSeleniumTest {
         assertThat(alertText)
                 .as("deve exibir mensagem de nenhuma recomendação encontrada")
                 .contains("Nenhuma recomendação encontrada");
-        // OBS: na nossa issue depois vamos dizer que o esperado seria redirecionar p/ /login
     }
 }
