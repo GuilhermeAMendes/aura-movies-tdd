@@ -167,4 +167,24 @@ public class UserControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").value(jwtToken));
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /authenticate - Should return 401 when credentials are invalid")
+    void shouldReturn401WhenCredentialsAreInvalid() throws Exception {
+        String jsonContent = """
+                {
+                    "email": "lucas@gmail.com",
+                    "password": "wrongpassword"
+                }
+                """;
+
+        when(authenticationService.authenticate(any(AuthRequest.class)))
+                .thenThrow(new BadCredentialsException("Invalid credentials"));
+
+        mockMvc.perform(post("/api/v1/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isUnauthorized());
+    }
 }
