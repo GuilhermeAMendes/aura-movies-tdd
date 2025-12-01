@@ -55,4 +55,28 @@ public class RegisterTest extends BaseTest {
         assertThat(driver.getCurrentUrl()).contains("register");
         assertThat(erroMessage).isEqualTo(expectedMessage);
     }
+
+    @Tag("UiTest")
+    @Test
+    void registrationFailedBecauseEmailAlreadyRegisteredTest() {
+        RegisterPage registerPage = new RegisterPage(driver, wait);
+
+        registerPage.performRegister(VALID_FIRST_NAME, VALID_LAST_NAME, email, VALID_PASSWORD);
+
+        waitForUrlContains("/login");
+
+        final By successToast = By.xpath("//div[contains(text(), 'Registro bem-sucedido!')]");
+
+        assertThat(successToast).isNotNull();
+
+        driver.navigate().back();
+
+        waitForUrlContains("/register");
+
+        registerPage.performRegister(VALID_FIRST_NAME, VALID_LAST_NAME, email, VALID_PASSWORD);
+
+        final By failedToast = By.xpath("//div[contains(text(), 'Falha ao registrar usuário')]");
+
+        assertThat(failedToast).isNotNull();
+    }
 }
