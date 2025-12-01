@@ -146,4 +146,23 @@ public class GetRecommendationServiceIntegrationTest {
         assertThat(recommendations).extracting(Movie::getMovieId)
                 .doesNotContain(testMovies.get(0).getMovieId(), testMovies.get(1).getMovieId());
     }
+    @Test
+    @DisplayName("Should handle grade exactly 4 as positive rating")
+    void shouldHandleGradeExactly4AsPositiveRating() {
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(4)); // Exactly 4
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+
+        var request = new GetRecommendationService.RecommendationServiceRequestDTO(testUser.getId());
+        var response = recommendationService.recommendMovies(request);
+        List<Movie> recommendations = response.recommendations();
+
+        assertThat(recommendations).isNotEmpty();
+        Set<Genre> recommendationGenres = recommendations.stream()
+                .map(Movie::getGenre)
+                .collect(Collectors.toSet());
+        assertThat(recommendationGenres).contains(Genre.ACTION);
+    }
 }
