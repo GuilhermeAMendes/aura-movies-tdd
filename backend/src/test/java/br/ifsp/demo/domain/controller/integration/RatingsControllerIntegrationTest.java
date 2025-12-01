@@ -118,5 +118,16 @@ public class RatingsControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.ratedMovies").exists());
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /ratings - Should return 401 when posting a rating without auth")
+    void shouldReturnUnauthorizedWhenPostingRatingWithoutAuth() throws Exception {
+        String ratingBody = "{}";
+        mockMvc.perform(post("/api/v1/ratings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ratingBody))
+                .andExpect(status().isUnauthorized());
+    }
 
 }
