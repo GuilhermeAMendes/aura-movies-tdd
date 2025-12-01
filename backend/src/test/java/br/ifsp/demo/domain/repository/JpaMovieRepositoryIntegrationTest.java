@@ -59,4 +59,18 @@ public class JpaMovieRepositoryIntegrationTest {
         assertThat(found.get().getTitle()).isEqualTo("Test Movie");
         assertThat(found.get().getGenre()).isEqualTo(Genre.ACTION);
     }
+    @Test
+    @DisplayName("Should enforce NOT NULL constraint on title field")
+    void shouldEnforceNotNullConstraintOnTitle() {
+        Movie movieWithoutTitle = new Movie(
+                new MovieId(UUID.randomUUID()),
+                null,
+                Genre.ACTION
+        );
+
+        assertThatThrownBy(() -> {
+            entityManager.persist(movieWithoutTitle);
+            entityManager.flush();
+        }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
+    }
 }
