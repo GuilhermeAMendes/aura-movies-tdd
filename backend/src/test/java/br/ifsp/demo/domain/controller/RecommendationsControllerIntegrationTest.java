@@ -65,4 +65,29 @@ public class RecommendationsControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("GET /recommendations - Should return 200 with recommendations when getting recommendations successfully")
+    void shouldReturn200WhenGettingRecommendations() throws Exception {
+        java.util.UUID userId = java.util.UUID.randomUUID();
+        User mockUser = User.builder()
+                .id(userId)
+                .name("Test")
+                .lastname("User")
+                .email("test@example.com")
+                .password("password")
+                .role(Role.USER)
+                .build();
+
+        when(getRecommendationService.recommendMovies(any()))
+                .thenReturn(new GetRecommendationService.RecommendationServiceResponseDTO(java.util.List.of()));
+
+        mockMvc.perform(get("/api/v1/recommendations")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.recommendedMovies").isArray());
+    }
 }
