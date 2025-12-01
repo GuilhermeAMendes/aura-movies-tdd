@@ -15,7 +15,11 @@ public class MyRatingsPage extends BasePageObject {
     public MyRatingsPage(WebDriver driver) {
         super(driver);
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        // URL do profile: /profile
+        wait.until(ExpectedConditions.urlContains("/profile"));
     }
+
+    // ----------- Navegação (tabs da navbar) -----------
 
     public RecommendationsPage goToRecommendationsTab() {
         wait.until(ExpectedConditions.elementToBeClickable(
@@ -31,6 +35,8 @@ public class MyRatingsPage extends BasePageObject {
         return new CatalogPage(driver);
     }
 
+    // ----------- Verificações -----------
+
     public boolean isEmptyMessageVisible() {
         // AlertTitle com texto "Nenhuma avaliação encontrada"
         return !driver.findElements(
@@ -39,10 +45,12 @@ public class MyRatingsPage extends BasePageObject {
     }
 
     public boolean hasRatingForMovie(String movieTitle) {
-        // Procura qualquer elemento de texto contendo o título do filme
-        return !driver.findElements(
-                By.xpath("//*[contains(text(),'" + movieTitle + "')]")
-        ).isEmpty();
+        // Usa aspas duplas no XPath para permitir títulos com apóstrofo (ex: Pan's Labyrinth)
+        String safeTitle = movieTitle.replace("\"", "\\\"");
+
+        String xpath = "//*[contains(normalize-space(),\"" + safeTitle + "\")]";
+
+        return !driver.findElements(By.xpath(xpath)).isEmpty();
     }
 
     public String getHeaderTitle() {
@@ -54,31 +62,35 @@ public class MyRatingsPage extends BasePageObject {
         ).getText();
     }
 
+    // ----------- Remoção de avaliação -----------
+
     public void removeRatingForMovie(String movieTitle) {
-        // 1) encontra o elemento que contém o título do filme
-        WebElement titleElement = wait.until(
+        // Mesmo esquema de escaping para o título
+        String safeTitle = movieTitle.replace("\"", "\\\"");
+
+        // 1) Encontra o "card" que contém ao mesmo tempo o título do filme
+        //    e um botão de Remover (o span sr-only com texto 'Remover')
+        WebElement card = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//*[contains(normalize-space(),'" + movieTitle + "')]")
+                        By.xpath(
+                                "//*[contains(normalize-space(),\"" + safeTitle + "\")]" +
+                                        "/ancestor::*[.//button[.//span[normalize-space()='Remover']]][1]"
+                        )
                 )
         );
 
-        // 2) sobe até um ancestral que tenha um botão com ícone de lixeira (é o card dessa avaliação)
-        WebElement card = titleElement.findElement(
-                By.xpath("./ancestor::*[.//button[.//svg[contains(@class,'lucide-trash')]]][1]")
-        );
-
-        // 3) dentro do card, acha o botão de remover
+        // 2) Dentro do card, encontra o botão de Remover
         WebElement deleteButton = card.findElement(
-                By.xpath(".//button[.//svg[contains(@class,'lucide-trash')]]")
+                By.xpath(".//button[.//span[normalize-space()='Remover']]")
         );
 
-        // 4) clica para remover
+        // 3) Clica para remover
         deleteButton.click();
 
-        // 5) espera o título sumir da página
-        wait.until(driver ->
-                driver.findElements(
-                        By.xpath("//*[contains(normalize-space(),'" + movieTitle + "')]")
+        // 4) Espera até o título desaparecer da lista
+        wait.until(d ->
+                d.findElements(
+                        By.xpath("//*[contains(normalize-space(),\"" + safeTitle + "\")]")
                 ).isEmpty()
         );
     }
