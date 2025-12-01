@@ -239,4 +239,18 @@ public class RatingsControllerIntegrationTest {
 
         assertNotNull(captor.getValue().grade(), "Grade object in DTO was null");
     }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("DELETE /ratings/{movieId} - Should return 204 when delete rate movie successfully")
+    void shouldReturn204WhenDeleteRatingMovie() throws Exception {
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        User mockUser = createUserMock();
+
+        mockMvc.perform(delete("/api/v1/ratings/{movieId}", movieId.unwrap())
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(status().isNoContent());
+    }
 }
