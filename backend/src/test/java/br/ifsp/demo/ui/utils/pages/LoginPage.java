@@ -12,6 +12,7 @@ public class LoginPage extends BasePage {
     private final By emailInput = By.xpath("//input[@name='email']");
     private final By passwordInput = By.xpath("//input[@name='password']");
     private final By loginButton = By.xpath("//button[contains(text(), 'Entrar')]");
+    private final By logoutButton = By.xpath("//button[.//span[normalize-space()='Sair']]");
 
     public LoginPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
@@ -43,6 +44,10 @@ public class LoginPage extends BasePage {
         type(emailInput, email);
         type(passwordInput, password);
         click(loginButton);
+    }
+
+    public void performLogout() {
+        click(logoutButton);
     }
 
 }
