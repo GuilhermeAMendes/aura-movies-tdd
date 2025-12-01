@@ -213,5 +213,21 @@ public class UserControllerIntegrationTest {
                         .content(jsonContent))
                 .andExpect(status().isBadRequest());
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /authenticate - Should return 400 when password is missing")
+    void shouldReturn400WhenPasswordIsMissing() throws Exception {
+        String jsonContent = """
+                {
+                    "email": "lucas@gmail.com"
+                }
+                """;
+
+        mockMvc.perform(post("/api/v1/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isBadRequest());
+    }
 
 }
