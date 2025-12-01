@@ -125,5 +125,27 @@ public class UserRatingsPersistenceIntegrationTest {
         assertThat(finalUser.getRatings()).hasSize(1);
         assertThat(finalUser.getRatings().get(0).getGrade().value()).isEqualTo(5);
     }
+    @Test
+    @DisplayName("Should update existing rating and persist changes")
+    void shouldUpdateExistingRating() {
+        Grade initialGrade = new Grade(3);
+        Grade updatedGrade = new Grade(5);
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovie1.getMovieId(), initialGrade);
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+
+        User retrievedUser = userRepository.findById(testUser.getId()).orElseThrow();
+        Rating updatedRating = retrievedUser.updateRating(testMovie1.getMovieId(), updatedGrade);
+        userRepository.save(retrievedUser);
+        entityManager.flush();
+        entityManager.clear();
+
+        User finalUser = userRepository.findById(testUser.getId()).orElseThrow();
+        assertThat(finalUser.getRatings()).hasSize(1);
+        assertThat(finalUser.getRatings().get(0).getGrade().value()).isEqualTo(5);
+        assertThat(updatedRating.getGrade().value()).isEqualTo(5);
+    }
 
 }
