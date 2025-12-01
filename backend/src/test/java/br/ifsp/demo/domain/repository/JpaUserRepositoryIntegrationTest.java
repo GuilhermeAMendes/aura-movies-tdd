@@ -61,4 +61,13 @@ public class JpaUserRepositoryIntegrationTest {
         assertThat(found.get().getEmail()).isEqualTo("test@example.com");
         assertThat(found.get().getName()).isEqualTo("Test");
     }
+
+    @Test
+    @DisplayName("Should return empty when email not found")
+    void shouldReturnEmptyWhenEmailNotFound() {
+        Optional<User> found = userRepository.findByEmail("nonexistent@example.com");
+
+        assertThat(found).isEmpty();
+    }
+
 }
