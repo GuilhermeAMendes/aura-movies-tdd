@@ -101,5 +101,29 @@ public class UserRatingsPersistenceIntegrationTest {
         assertThat(ratings).extracting(r -> r.getGrade().value())
                 .contains(5, 4);
     }
+    @Test
+    @DisplayName("Should enforce uniqueness rule - cannot add duplicate rating for same movie")
+    void shouldEnforceUniquenessRuleForRatings() {
+        Grade grade1 = new Grade(5);
+        Grade grade2 = new Grade(3);
+
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        Rating firstRating = user.addRating(testMovie1.getMovieId(), grade1);
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+        User retrievedUser = userRepository.findById(testUser.getId()).orElseThrow();
+        Rating duplicateRating = retrievedUser.addRating(testMovie1.getMovieId(), grade2);
+
+        assertThat(firstRating).isNotNull();
+        assertThat(duplicateRating).isNull();
+
+        userRepository.save(retrievedUser);
+        entityManager.flush();
+        entityManager.clear();
+        User finalUser = userRepository.findById(testUser.getId()).orElseThrow();
+        assertThat(finalUser.getRatings()).hasSize(1);
+        assertThat(finalUser.getRatings().get(0).getGrade().value()).isEqualTo(5);
+    }
 
 }
