@@ -14,8 +14,6 @@ public class EntityBuilder {
 
     private static final Faker faker = Faker.instance();
 
-    // ... (Métodos de User existentes)
-
     public static User createRandomUser() {
         return User.builder()
                 .id(UUID.randomUUID())
@@ -28,11 +26,9 @@ public class EntityBuilder {
                 .build();
     }
 
-    // --- AQUI ESTÁ A MUDANÇA ---
     public static Movie createRandomMovie() {
-        // Geramos o ID manualmente aqui para o SQLite não se perder
         return new Movie(
-                new MovieId(UUID.randomUUID()), // Instanciamos o MovieId com um UUID randômico
+                new MovieId(UUID.randomUUID()),
                 faker.book().title(),
                 Genre.SCI_FI
         );
