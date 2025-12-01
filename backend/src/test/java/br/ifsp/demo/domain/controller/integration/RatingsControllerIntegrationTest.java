@@ -253,4 +253,28 @@ public class RatingsControllerIntegrationTest {
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(status().isNoContent());
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("DELETE /ratings/{movieId} - Should return 404 when delete rate movie is not found")
+    void shouldReturn404WhenDeleteRatingMovieNotFound() throws Exception {
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        User mockUser = createUserMock();
+
+        String exceptionMessage = "Movie not found";
+
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
+
+        doThrow(new MovieNotFoundException(exceptionMessage))
+                .when(deleteRateService)
+                .deleteRate(any(DeleteRateService.DeleteRateServiceRequestDTO.class));
+
+        mockMvc.perform(delete("/api/v1/ratings/{movieId}", movieId.unwrap())
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value(exceptionMessage))
+                .andExpect(jsonPath("$.status").value("NOT_FOUND"));
+    }
 }
