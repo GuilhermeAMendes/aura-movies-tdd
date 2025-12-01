@@ -301,5 +301,25 @@ public class UserRatingsPersistenceIntegrationTest {
 
         assertThat(minGrade).isEqualTo(2);
     }
+    @Test
+    @DisplayName("Should sum all grades from user ratings using SUM aggregation")
+    void shouldSumAllGradesFromUserRatings() {
+        Movie movie3 = new Movie(new MovieId(UUID.randomUUID()), "Movie 3", Genre.DRAMA);
+        entityManager.persistAndFlush(movie3);
+
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovie1.getMovieId(), new Grade(5));
+        user.addRating(testMovie2.getMovieId(), new Grade(4));
+        user.addRating(movie3.getMovieId(), new Grade(3));
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+        User retrievedUser = userRepository.findById(testUser.getId()).orElseThrow();
+        int sumGrades = retrievedUser.getRatings().stream()
+                .mapToInt(r -> r.getGrade().value())
+                .sum();
+
+        assertThat(sumGrades).isEqualTo(12);
+    }
 
 }
