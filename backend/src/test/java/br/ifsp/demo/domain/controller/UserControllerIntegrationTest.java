@@ -108,5 +108,14 @@ public class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value(exceptionMessage))
                 .andExpect(jsonPath("$.status").value("CONFLICT"));
     }
-
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /register - Should return 400 when request body is empty")
+    void shouldReturn400WhenRegisterRequestBodyIsEmpty() throws Exception {
+        mockMvc.perform(post("/api/v1/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest());
+    }
 }
