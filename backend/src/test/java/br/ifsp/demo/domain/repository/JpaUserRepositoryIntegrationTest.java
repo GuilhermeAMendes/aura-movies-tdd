@@ -125,4 +125,22 @@ public class JpaUserRepositoryIntegrationTest {
             entityManager.flush();
         }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
     }
+    @Test
+    @DisplayName("Should enforce NOT NULL constraint on email field")
+    void shouldEnforceNotNullConstraintOnEmail() {
+        User userWithoutEmail = User.builder()
+                .id(UUID.randomUUID())
+                .name("Test")
+                .lastname("User")
+                .email(null)
+                .password("password123")
+                .role(Role.USER)
+                .ratings(new java.util.ArrayList<>())
+                .build();
+
+        assertThatThrownBy(() -> {
+            entityManager.persist(userWithoutEmail);
+            entityManager.flush();
+        }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
+    }
 }
