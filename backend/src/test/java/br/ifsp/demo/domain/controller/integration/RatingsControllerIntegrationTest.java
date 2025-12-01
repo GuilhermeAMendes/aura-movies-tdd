@@ -1,5 +1,6 @@
-package br.ifsp.demo.domain.controller;
+package br.ifsp.demo.domain.controller.integration;
 
+import br.ifsp.demo.domain.controller.RatingsController;
 import br.ifsp.demo.security.config.ApiExceptionHandler;
 import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.model.movie.Grade;
@@ -341,5 +342,24 @@ public class RatingsControllerIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(exceptionMessage))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"));
+    }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("GET /ratings - Should return 403 when operation is forbidden")
+    void shouldReturn403WhenOperationIsForbidden() throws Exception {
+        User mockUser = createUserMock();
+        String exceptionMessage = "Illegal State";
+
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
+
+        when(getRatedMoviesService.restoreRatedMovies(any(GetRatedMoviesService.RatedServiceRequestDTO.class)))
+                .thenThrow(new IllegalStateException(exceptionMessage));
+
+        mockMvc.perform(get("/api/v1/ratings")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
     }
 }
