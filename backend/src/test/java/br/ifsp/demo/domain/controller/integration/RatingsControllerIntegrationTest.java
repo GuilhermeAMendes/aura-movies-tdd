@@ -200,4 +200,43 @@ public class RatingsControllerIntegrationTest {
                         .content(jsonContent))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("PATCH /ratings/{movieId} - Should return 204 when patching rating successfully")
+    void shouldReturn204WhenPatchingRating() throws Exception {
+        User mockUser = createUserMock();
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        Grade grade = new Grade(4);
+        Rating rating = new Rating(movieId, grade, LocalDateTime.now());
+
+
+        when(authenticationInfoService.getAuthenticatedUserId()).thenReturn(mockUser.getId());
+
+        when(patchRateService.patchRate(any(PatchRateService.PatchRateServiceRequestDTO.class)))
+                .thenReturn(new PatchRateService.PatchRateServiceResponseDTO(rating));
+
+        String jsonContent = String.format(
+                """
+                        {
+                          "grade": "%d"
+                        }""",
+                grade.value()
+        );
+
+        mockMvc.perform(patch("/api/v1/ratings/{movieId}", movieId.unwrap())
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isNoContent());
+
+        ArgumentCaptor<PatchRateService.PatchRateServiceRequestDTO> captor =
+                ArgumentCaptor.forClass(PatchRateService.PatchRateServiceRequestDTO.class);
+
+        verify(patchRateService).patchRate(captor.capture());
+
+        assertNotNull(captor.getValue().grade(), "Grade object in DTO was null");
+    }
 }
