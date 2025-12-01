@@ -165,4 +165,18 @@ public class GetRecommendationServiceIntegrationTest {
                 .collect(Collectors.toSet());
         assertThat(recommendationGenres).contains(Genre.ACTION);
     }
+    @Test
+    @DisplayName("Should filter out movies with grade less than 4")
+    void shouldFilterOutMoviesWithGradeLessThan4() {
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(3)); // Less than 4
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+
+        var request = new GetRecommendationService.RecommendationServiceRequestDTO(testUser.getId());
+        var response = recommendationService.recommendMovies(request);
+        List<Movie> recommendations = response.recommendations();
+        assertThat(recommendations).isEmpty();
+    }
 }
