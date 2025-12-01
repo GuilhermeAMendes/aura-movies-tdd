@@ -102,4 +102,15 @@ public class JpaMovieRepositoryIntegrationTest {
         assertThat(allMovies).extracting(Movie::getTitle)
                 .contains("Movie 1", "Movie 2", "Movie 3");
     }
+    @Test
+    @DisplayName("Should count movies correctly")
+    void shouldCountMovies() {
+        Movie movie1 = new Movie(new MovieId(UUID.randomUUID()), "Movie 1", Genre.ACTION);
+        Movie movie2 = new Movie(new MovieId(UUID.randomUUID()), "Movie 2", Genre.COMEDY);
+
+        entityManager.persistAndFlush(movie1);
+        entityManager.persistAndFlush(movie2);
+        long count = movieRepository.count();
+        assertThat(count).isGreaterThanOrEqualTo(2);
+    }
 }
