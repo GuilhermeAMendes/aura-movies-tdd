@@ -223,5 +223,22 @@ public class UserRatingsPersistenceIntegrationTest {
                         movie4.getMovieId()
                 );
     }
+    @Test
+    @DisplayName("Should count ratings per user correctly using COUNT aggregation")
+    void shouldCountRatingsPerUserCorrectly() {
+        Movie movie3 = new Movie(new MovieId(UUID.randomUUID()), "Movie 3", Genre.DRAMA);
+        entityManager.persistAndFlush(movie3);
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovie1.getMovieId(), new Grade(5));
+        user.addRating(testMovie2.getMovieId(), new Grade(4));
+        user.addRating(movie3.getMovieId(), new Grade(3));
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+
+        User retrievedUser = userRepository.findById(testUser.getId()).orElseThrow();
+        int ratingCount = retrievedUser.getRatings().size();
+        assertThat(ratingCount).isEqualTo(3);
+    }
 
 }
