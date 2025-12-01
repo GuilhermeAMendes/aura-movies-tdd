@@ -3,7 +3,6 @@ package br.ifsp.demo.ui.utils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -15,7 +14,6 @@ public class BaseTest {
     protected WebDriver driver;
     protected WebDriverWait wait;
     protected final String FRONT_URL = "http://localhost:3000/";
-    protected final String BACK_URL = "http://localhost:8080/";
     protected final Duration TIMEOUT = Duration.ofSeconds(15);
 
     @BeforeEach
@@ -28,10 +26,6 @@ public class BaseTest {
         this.wait = new WebDriverWait(driver, TIMEOUT);
 
         driver.get(FRONT_URL);
-    }
-
-    protected void waitForElementVisibility(By locator) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
     protected void waitForUrlContains(String urlPart) {
