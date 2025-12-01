@@ -126,4 +126,24 @@ public class JpaMovieRepositoryIntegrationTest {
             entityManager.flush();
         }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
     }
+    @Test
+    @DisplayName("Should count movies by genre using aggregation")
+    void shouldCountMoviesByGenre() {
+        Movie actionMovie1 = new Movie(new MovieId(UUID.randomUUID()), "Action 1", Genre.ACTION);
+        Movie actionMovie2 = new Movie(new MovieId(UUID.randomUUID()), "Action 2", Genre.ACTION);
+        Movie comedyMovie = new Movie(new MovieId(UUID.randomUUID()), "Comedy 1", Genre.COMEDY);
+        entityManager.persistAndFlush(actionMovie1);
+        entityManager.persistAndFlush(actionMovie2);
+        entityManager.persistAndFlush(comedyMovie);
+
+        List<Movie> allMovies = movieRepository.findAll();
+        long actionCount = allMovies.stream()
+                .filter(m -> m.getGenre() == Genre.ACTION)
+                .count();
+        long comedyCount = allMovies.stream()
+                .filter(m -> m.getGenre() == Genre.COMEDY)
+                .count();
+        assertThat(actionCount).isGreaterThanOrEqualTo(2);
+        assertThat(comedyCount).isGreaterThanOrEqualTo(1);
+    }
 }
