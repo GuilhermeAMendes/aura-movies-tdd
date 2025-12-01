@@ -82,5 +82,31 @@ public class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.id").value(userId.toString()));
     }
 
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /register - Should return 409 when email already exists")
+    void shouldReturn409WhenRegisteringUserAlreadyExists() throws Exception {
+        String jsonContent = """
+                {
+                    "name": "Lucas",
+                    "lastname": "Greatest of All Time (G.O.A.T.)",
+                    "email": "lucas@gmail.com",
+                    "password": "senha"
+                }
+                """;
+
+        String exceptionMessage = "Email already registered: lucas@gmail.com";
+
+        when(authenticationService.register(any(RegisterUserRequest.class)))
+                .thenThrow(new EntityAlreadyExistsException(exceptionMessage));
+
+        mockMvc.perform(post("/api/v1/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(exceptionMessage))
+                .andExpect(jsonPath("$.status").value("CONFLICT"));
+    }
 
 }
