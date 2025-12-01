@@ -129,5 +129,32 @@ public class RatingsControllerIntegrationTest {
                         .content(ratingBody))
                 .andExpect(status().isUnauthorized());
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /ratings - Should return 201 with rating data when posting rating successfully")
+    void shouldReturn201WhenPostingRating() throws Exception {
+        User mockUser = createUserMock();
 
+        MovieId movieId = new MovieId(UUID.randomUUID());
+        Grade grade = new Grade(5);
+        Rating rating = new Rating(movieId, grade, LocalDateTime.now());
+
+        when(postRateService.saveRate(any(PostRateService.PostRateServiceRequestDTO.class)))
+                .thenReturn(new PostRateService.PostRateServiceResponseDTO(rating));
+
+        String jsonContent = String.format(
+                """
+                        {
+                          "userId": "%s",
+                          "movieId": {
+                            "id": "%s"
+                          },
+                          "grade": "%d"
+                        }""",
+                mockUser.getId(),
+                movieId.unwrap(),
+                5
+        );
+    }
 }
