@@ -194,4 +194,34 @@ public class UserRatingsPersistenceIntegrationTest {
                 .isBeforeOrEqualTo(afterAdd);
     }
 
+    @Test
+    @DisplayName("Should handle multiple ratings for different movies")
+    void shouldHandleMultipleRatingsForDifferentMovies() {
+        Movie movie3 = new Movie(new MovieId(UUID.randomUUID()), "Movie 3", Genre.DRAMA);
+        Movie movie4 = new Movie(new MovieId(UUID.randomUUID()), "Movie 4", Genre.THRILLER);
+
+        entityManager.persistAndFlush(movie3);
+        entityManager.persistAndFlush(movie4);
+
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovie1.getMovieId(), new Grade(5));
+        user.addRating(testMovie2.getMovieId(), new Grade(4));
+        user.addRating(movie3.getMovieId(), new Grade(3));
+        user.addRating(movie4.getMovieId(), new Grade(5));
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+        User retrievedUser = userRepository.findById(testUser.getId()).orElseThrow();
+
+        assertThat(retrievedUser.getRatings()).hasSize(4);
+        assertThat(retrievedUser.getRatings())
+                .extracting(Rating::getMovieId)
+                .containsExactlyInAnyOrder(
+                        testMovie1.getMovieId(),
+                        testMovie2.getMovieId(),
+                        movie3.getMovieId(),
+                        movie4.getMovieId()
+                );
+    }
+
 }
