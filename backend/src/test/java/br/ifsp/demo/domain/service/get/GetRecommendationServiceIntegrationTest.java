@@ -97,4 +97,16 @@ public class GetRecommendationServiceIntegrationTest {
         assertThat(recommendations).extracting(Movie::getGenre)
                 .doesNotContain(Genre.COMEDY);
     }
+
+    @Test
+    @DisplayName("Should return all movies when user has no ratings")
+    void shouldReturnAllMoviesWhenUserHasNoRatings() {
+        var request = new GetRecommendationService.RecommendationServiceRequestDTO(testUser.getId());
+        var response = recommendationService.recommendMovies(request);
+        List<Movie> recommendations = response.recommendations();
+
+        assertThat(recommendations).isNotEmpty();
+        assertThat(recommendations).extracting(Movie::getMovieId)
+                .containsAll(testMovies.stream().map(Movie::getMovieId).collect(Collectors.toList()));
+    }
 }
