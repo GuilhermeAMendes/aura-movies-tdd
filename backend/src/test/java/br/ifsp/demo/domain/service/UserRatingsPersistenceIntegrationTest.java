@@ -147,5 +147,27 @@ public class UserRatingsPersistenceIntegrationTest {
         assertThat(finalUser.getRatings().get(0).getGrade().value()).isEqualTo(5);
         assertThat(updatedRating.getGrade().value()).isEqualTo(5);
     }
+    @Test
+    @DisplayName("Should delete rating and persist changes")
+    void shouldDeleteRating() {
+        Grade grade1 = new Grade(5);
+        Grade grade2 = new Grade(4);
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovie1.getMovieId(), grade1);
+        user.addRating(testMovie2.getMovieId(), grade2);
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+
+        User retrievedUser = userRepository.findById(testUser.getId()).orElseThrow();
+        retrievedUser.deleteRating(testMovie1.getMovieId());
+        userRepository.save(retrievedUser);
+        entityManager.flush();
+        entityManager.clear();
+
+        User finalUser = userRepository.findById(testUser.getId()).orElseThrow();
+        assertThat(finalUser.getRatings()).hasSize(1);
+        assertThat(finalUser.getRatings().get(0).getMovieId()).isEqualTo(testMovie2.getMovieId());
+    }
 
 }
