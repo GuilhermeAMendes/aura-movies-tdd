@@ -162,4 +162,14 @@ public class JpaUserRepositoryIntegrationTest {
             entityManager.flush();
         }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
     }
+    @Test
+    @DisplayName("Should persist and retrieve user with empty ratings list")
+    void shouldPersistAndRetrieveUserWithEmptyRatings() {
+        entityManager.persistAndFlush(testUser);
+        Optional<User> found = userRepository.findById(testUser.getId());
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getRatings()).isNotNull();
+        assertThat(found.get().getRatings()).isEmpty();
+    }
 }
