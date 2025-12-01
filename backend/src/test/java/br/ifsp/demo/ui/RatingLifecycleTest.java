@@ -8,7 +8,10 @@ import br.ifsp.demo.ui.utils.pages.MyRatingsPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,8 +69,37 @@ public class RatingLifecycleTest extends BaseTest {
                 .as("A avaliação deve ter sido atualizada para 5 estrelas após a edição")
                 .isEqualTo(newRating);
 
-        // TODO:
-        // 1. DELETAR RATING E VALIDAR
+        String deleteButtonXpath = String.format(
+                "//div[contains(@class, 'cursor-pointer')][.//p[contains(., \"%s\")]]//button[.//svg[contains(@class, 'lucide-trash')]]",
+                targetMovieTitle.trim()
+        );
+
+        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(deleteButtonXpath)));
+        deleteButton.click();
+
+        wait.until(ExpectedConditions.or(
+                ExpectedConditions.invisibilityOfElementLocated(By.xpath(String.format(
+                        "//div[contains(@class, 'cursor-pointer')][.//p[contains(., \"%s\")]]",
+                        targetMovieTitle.trim()
+                ))),
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[contains(text(), 'Nenhuma avaliação encontrada')]"))
+        ));
+
+        boolean ratingStillExists;
+        try {
+            new WebDriverWait(driver, java.time.Duration.ofSeconds(2))
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(
+                            "//div[contains(@class, 'cursor-pointer')][.//p[contains(., \"%s\")]]",
+                            targetMovieTitle.trim()
+                    ))));
+            ratingStillExists = true;
+        } catch (Exception e) {
+            ratingStillExists = false;
+        }
+
+        assertThat(ratingStillExists)
+                .as("A avaliação do filme '%s' deve ter sido removida após o delete", targetMovieTitle)
+                .isFalse();
     }
 
     // TODO:

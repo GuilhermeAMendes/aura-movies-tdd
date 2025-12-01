@@ -114,8 +114,8 @@ public class GetRecommendationServiceIntegrationTest {
     @DisplayName("Should aggregate preferred genres from positively rated movies")
     void shouldAggregatePreferredGenresFromPositivelyRatedMovies() {
         User user = userRepository.findById(testUser.getId()).orElseThrow();
-        user.addRating(testMovies.get(0).getMovieId(), new Grade(5)); // ACTION
-        user.addRating(testMovies.get(4).getMovieId(), new Grade(4)); // DRAMA
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(5));
+        user.addRating(testMovies.get(4).getMovieId(), new Grade(4));
         userRepository.save(user);
         entityManager.flush();
         entityManager.clear();
@@ -134,8 +134,8 @@ public class GetRecommendationServiceIntegrationTest {
     @DisplayName("Should exclude already rated movies from recommendations")
     void shouldExcludeAlreadyRatedMoviesFromRecommendations() {
         User user = userRepository.findById(testUser.getId()).orElseThrow();
-        user.addRating(testMovies.get(0).getMovieId(), new Grade(5)); // Action Movie 1
-        user.addRating(testMovies.get(1).getMovieId(), new Grade(4)); // Action Movie 2
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(5));
+        user.addRating(testMovies.get(1).getMovieId(), new Grade(4));
         userRepository.save(user);
         entityManager.flush();
         entityManager.clear();
@@ -150,7 +150,7 @@ public class GetRecommendationServiceIntegrationTest {
     @DisplayName("Should handle grade exactly 4 as positive rating")
     void shouldHandleGradeExactly4AsPositiveRating() {
         User user = userRepository.findById(testUser.getId()).orElseThrow();
-        user.addRating(testMovies.get(0).getMovieId(), new Grade(4)); // Exactly 4
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(4));
         userRepository.save(user);
         entityManager.flush();
         entityManager.clear();
@@ -169,7 +169,7 @@ public class GetRecommendationServiceIntegrationTest {
     @DisplayName("Should filter out movies with grade less than 4")
     void shouldFilterOutMoviesWithGradeLessThan4() {
         User user = userRepository.findById(testUser.getId()).orElseThrow();
-        user.addRating(testMovies.get(0).getMovieId(), new Grade(3)); // Less than 4
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(3));
         userRepository.save(user);
         entityManager.flush();
         entityManager.clear();
