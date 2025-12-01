@@ -38,6 +38,10 @@ public class BaseTest {
         wait.until(ExpectedConditions.urlContains(urlPart));
     }
 
+    protected void waitForUrlIsEqualTo(String urlPart) {
+        wait.until(ExpectedConditions.urlToBe(urlPart));
+    }
+
     @AfterEach
     public void tearDown() {
         if  (driver != null) {
