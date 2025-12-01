@@ -183,4 +183,13 @@ public class MovieControllerIntegrationTest {
                 .andExpect(jsonPath("$.movies").isArray())
                 .andExpect(jsonPath("$.movies").isEmpty());
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("GET /movies - Should return 401 when user is not authenticated")
+    void shouldReturn401WhenNotAuthenticatedForGetAllMovies() throws Exception {
+        mockMvc.perform(get("/api/v1/movies")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
 }
