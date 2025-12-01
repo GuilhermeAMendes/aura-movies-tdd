@@ -113,4 +113,17 @@ public class JpaMovieRepositoryIntegrationTest {
         long count = movieRepository.count();
         assertThat(count).isGreaterThanOrEqualTo(2);
     }
+    @Test
+    @DisplayName("Should enforce unique constraint on movie ID")
+    void shouldEnforceUniqueConstraintOnMovieId() {
+        MovieId sharedId = new MovieId(UUID.randomUUID());
+        Movie movie1 = new Movie(sharedId, "Movie A", Genre.ACTION);
+        entityManager.persistAndFlush(movie1);
+
+        Movie duplicateIdMovie = new Movie(sharedId, "Movie B", Genre.COMEDY);
+        assertThatThrownBy(() -> {
+            entityManager.persist(duplicateIdMovie);
+            entityManager.flush();
+        }).isInstanceOfAny(DataIntegrityViolationException.class, PersistenceException.class);
+    }
 }
