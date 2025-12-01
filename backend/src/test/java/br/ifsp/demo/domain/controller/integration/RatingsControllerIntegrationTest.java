@@ -102,5 +102,21 @@ public class RatingsControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("GET /ratings - Should return 200 with rated movies when getting ratings successfully")
+    void shouldReturn200WhenGettingRatedMovies() throws Exception {
+        User mockUser = createUserMock();
+
+        when(getRatedMoviesService.restoreRatedMovies(any(GetRatedMoviesService.RatedServiceRequestDTO.class)))
+                .thenReturn(new GetRatedMoviesService.RatedServiceResponseDTO(List.of()));
+
+        mockMvc.perform(get("/api/v1/ratings")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.ratedMovies").exists());
+    }
 
 }
