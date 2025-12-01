@@ -128,4 +128,23 @@ public class GetRatedMoviesServiceIntegrationTest {
         assertThat(ratedMovie.grade().value()).isEqualTo(5);
         assertThat(ratedMovie.lastGradedAt()).isNotNull();
     }
+    @Test
+    @DisplayName("Should handle multiple ratings with different grades")
+    void shouldHandleMultipleRatingsWithDifferentGrades() {
+        User user = userRepository.findById(testUser.getId()).orElseThrow();
+        user.addRating(testMovies.get(0).getMovieId(), new Grade(5));
+        user.addRating(testMovies.get(1).getMovieId(), new Grade(2));
+        user.addRating(testMovies.get(2).getMovieId(), new Grade(4));
+        userRepository.save(user);
+        entityManager.flush();
+        entityManager.clear();
+
+        var request = new GetRatedMoviesService.RatedServiceRequestDTO(testUser.getId());
+        var response = ratedMoviesService.restoreRatedMovies(request);
+        List<GetRatedMoviesService.RatedMovieDTO> ratedMovies = response.ratedMovies();
+        assertThat(ratedMovies).hasSize(3);
+        assertThat(ratedMovies).extracting(GetRatedMoviesService.RatedMovieDTO::grade)
+                .extracting(Grade::value)
+                .containsExactlyInAnyOrder(5, 2, 4);
+    }
 }
