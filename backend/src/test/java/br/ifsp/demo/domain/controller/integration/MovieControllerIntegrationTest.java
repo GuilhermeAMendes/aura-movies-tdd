@@ -1,5 +1,6 @@
-package br.ifsp.demo.domain.controller;
+package br.ifsp.demo.domain.controller.integration;
 
+import br.ifsp.demo.domain.controller.MovieController;
 import br.ifsp.demo.domain.exception.MovieNotFoundException;
 import br.ifsp.demo.domain.model.movie.Genre;
 import br.ifsp.demo.domain.model.movie.Movie;

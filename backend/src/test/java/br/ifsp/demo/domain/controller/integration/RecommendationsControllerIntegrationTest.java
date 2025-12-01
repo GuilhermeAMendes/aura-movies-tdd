@@ -1,5 +1,6 @@
-package br.ifsp.demo.domain.controller;
+package br.ifsp.demo.domain.controller.integration;
 
+import br.ifsp.demo.domain.controller.RecommendationsController;
 import br.ifsp.demo.security.auth.Role;
 import br.ifsp.demo.security.auth.User;
 import br.ifsp.demo.domain.repository.JpaMovieRepository;

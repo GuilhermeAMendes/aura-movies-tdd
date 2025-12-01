@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.controller;
+package br.ifsp.demo.domain.controller.integration;
 
 import br.ifsp.demo.security.config.ApiExceptionHandler;
 import br.ifsp.demo.domain.exception.EntityAlreadyExistsException;
@@ -9,9 +9,6 @@ import br.ifsp.demo.security.config.SecurityConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
