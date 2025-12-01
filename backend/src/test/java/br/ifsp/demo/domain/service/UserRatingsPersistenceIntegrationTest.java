@@ -1,0 +1,105 @@
+package br.ifsp.demo.domain.service;
+
+import br.ifsp.demo.domain.model.movie.Genre;
+import br.ifsp.demo.domain.model.movie.Grade;
+import br.ifsp.demo.domain.model.movie.Movie;
+import br.ifsp.demo.domain.model.movie.MovieId;
+import br.ifsp.demo.domain.model.rating.Rating;
+import br.ifsp.demo.domain.repository.JpaUserRepository;
+import br.ifsp.demo.security.auth.Role;
+import br.ifsp.demo.security.auth.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import br.ifsp.demo.config.IntegrationTestConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(IntegrationTestConfiguration.class)
+@ActiveProfiles("test")
+@Tag("PersistenceTest")
+@Tag("IntegrationTest")
+@DisplayName("User Ratings Persistence Integration Tests")
+public class UserRatingsPersistenceIntegrationTest {
+
+    @Autowired
+    private TestEntityManager entityManager;
+
+    @Autowired
+    private JpaUserRepository userRepository;
+
+    private User testUser;
+    private Movie testMovie1;
+    private Movie testMovie2;
+
+    @BeforeEach
+    void setUp() {
+        testUser = User.builder()
+                .id(UUID.randomUUID())
+                .name("Test")
+                .lastname("User")
+                .email("test@example.com")
+                .password("password123")
+                .role(Role.USER)
+                .ratings(new ArrayList<>())
+                .build();
+
+        testMovie1 = new Movie(
+                new MovieId(UUID.randomUUID()),
+                "Test Movie 1",
+                Genre.ACTION
+        );
+        testMovie2 = new Movie(
+                new MovieId(UUID.randomUUID()),
+                "Test Movie 2",
+                Genre.COMEDY
+        );
+        entityManager.persistAndFlush(testMovie1);
+        entityManager.persistAndFlush(testMovie2);
+        entityManager.persistAndFlush(testUser);
+    }
+
+    @Test
+    @DisplayName("Should persist and retrieve ratings through ElementCollection")
+    void shouldPersistAndRetrieveRatings() {
+        Grade grade1 = new Grade(5);
+        Grade grade2 = new Grade(4);
+
+        userRepository.findById(testUser.getId())
+                .orElseThrow()
+                .addRating(testMovie1.getMovieId(), grade1);
+
+        userRepository.findById(testUser.getId())
+                .orElseThrow()
+                .addRating(testMovie2.getMovieId(), grade2);
+
+        userRepository.save(testUser);
+        entityManager.flush();
+        entityManager.clear();
+
+        User retrievedUser = userRepository.findById(testUser.getId()).orElseThrow();
+        List<Rating> ratings = retrievedUser.getRatings();
+
+        assertThat(ratings).hasSize(2);
+        assertThat(ratings).extracting(Rating::getMovieId)
+                .contains(testMovie1.getMovieId(), testMovie2.getMovieId());
+        assertThat(ratings).extracting(r -> r.getGrade().value())
+                .contains(5, 4);
+    }
+
+}
