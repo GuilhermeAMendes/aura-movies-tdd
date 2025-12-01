@@ -101,4 +101,13 @@ public class GetRatedMoviesServiceIntegrationTest {
         assertThat(firstRated.grade().value()).isEqualTo(5);
         assertThat(firstRated.lastGradedAt()).isNotNull();
     }
+    @Test
+    @DisplayName("Should return empty list when user has no ratings")
+    void bshouldReturnEmptyListWhenUserHasNoRatings() {
+
+        var request = new GetRatedMoviesService.RatedServiceRequestDTO(testUser.getId());
+        var response = ratedMoviesService.restoreRatedMovies(request);
+        List<GetRatedMoviesService.RatedMovieDTO> ratedMovies = response.ratedMovies();
+        assertThat(ratedMovies).isEmpty();
+    }
 }
