@@ -92,4 +92,24 @@ public class LoginTest extends BaseTest {
 
         assertThat(driver.findElement(accessButton).isDisplayed()).isTrue();
     }
+
+    @Tag("UiTest")
+    @Test
+    void shouldRedirectToLoginWhenAccessingProtectedRouteAfterLogout() {
+        LoginPage loginPage = new LoginPage(driver, wait);
+
+        loginPage.performLogin(VALID_EMAIL, VALID_PASSWORD);
+
+        waitForUrlContains("/recommendations");
+
+        loginPage.performLogout();
+
+        waitForUrlIsEqualTo(FRONT_URL);
+
+        driver.navigate().to(FRONT_URL + "profile");
+
+        waitForUrlContains("/login");
+
+        assertThat(driver.getCurrentUrl()).contains("/login");
+    }
 }
