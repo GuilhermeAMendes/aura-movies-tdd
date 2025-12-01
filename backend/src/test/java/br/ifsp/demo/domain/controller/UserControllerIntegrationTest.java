@@ -242,4 +242,14 @@ public class UserControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("POST /authenticate - Should return 415 when content type is not JSON")
+    void shouldReturn415WhenAuthenticateContentTypeIsNotJson() throws Exception {
+        mockMvc.perform(post("/api/v1/authenticate")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .content("email=lucas@gmail.com&password=senha"))
+                .andExpect(status().isUnsupportedMediaType());
+    }
 }
