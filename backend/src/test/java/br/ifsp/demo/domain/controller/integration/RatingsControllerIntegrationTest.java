@@ -156,5 +156,20 @@ public class RatingsControllerIntegrationTest {
                 movieId.unwrap(),
                 5
         );
+
+        mockMvc.perform(post("/api/v1/ratings")
+                        .with(SecurityMockMvcRequestPostProcessors.user(mockUser))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.rating.grade").value(5));
+
+        ArgumentCaptor<PostRateService.PostRateServiceRequestDTO> captor =
+                ArgumentCaptor.forClass(PostRateService.PostRateServiceRequestDTO.class);
+
+        verify(postRateService).saveRate(captor.capture());
+
+        assertNotNull(captor.getValue().grade(), "Grade object in DTO was null");
     }
 }
